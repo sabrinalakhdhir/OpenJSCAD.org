@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>  
+<head>
+  <meta charset="utf-8">
+  <title>Glucose Monitor Designer - Notes</title>
+
+      <!-- Base code for this human body project from: https://github.com/lalitbansal457/human-body-canvas 
+    * This included the image file that is being used and the idea of circles as points for selection
+    * The drawing functions have been brought forwards from the sourced project -->
+	<title>Customization Guidance Tool - Placement</title>
+	<script
+  src="http://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+	<style type="text/css">
+		#humanBody, div {
+			float: left;
+
+		}
+		p {
+			display: none;
+			margin-top: 10px;
+		}
+	</style>
+
+</head>
+
+  <body>
+    <style>
+      #container {
+        position: relative;
+      }
+      #container canvas, #overlay {
+        position: absolute;
+      }
+    </style>
+
+<div style="position:absolute; left: 1100px; top: 50px;"> 
+  <form action=https://www.youtube.com/results method=”get” target="_blank">
+    <!--<label id="search_query_label" for="q">Enter search term:</label>-->
+    <input name="q" id="q" placeholder="Search" type=text>
+    <input type=submit id="submitted" value="Search YouTube"> 
+  </form>
+  <!--<button id="saveProjectButton" onclick="saveProject()" style="position: absolute; left: 300px; top: 0px; z-index: 10;">Save Project</button>-->
+</div>
+
+    <canvas id="progressCanvas" style="position: absolute; left: 310px; top: 10px;" width="800" height="150">
+    </canvas>
+    
+    <div style="position: absolute; top: 10px; left: 20px;"> 
+      <!--<button onclick="addnote()">Add a Note</button>-->
+      <button id="hide" onclick="hidenotes()">Hide Notes</button>
+      <button id="show" onclick="shownotes()" hidden>Show Notes</button>  
+      <div id="notes" >
+        <form> 
+          <!--
+          <input type="radio" id="pd" name="usertype" value="pd">
+          <label for="pd">I'm a Product Designer     </label><br>
+
+          <input type="radio" id="hcp" name="usertype" value="hcp">
+          <label for="hcp">I'm a Health Care Professional     </label><br>
+
+          <input type="radio" id="end" name="usertype" value="end">
+          <label for="end">I'm an End-User     </label><br>
+          -->
+
+          <input type='text' name='note' placeholder='Enter note here...' id='noteText'>
+          <br>
+          <input type='button' id="savenotebutton" value='Add' onclick='save()'>
+        </form>
+      </div>
+    </div>
+    <button id="viewPreferences" style="position: absolute; top:120px; left: 20px; z-index: 100;" onclick="showPrefs()">View Selected Preferences</button>
+
+
+    <div id="replies">
+        <canvas id="canvas" width=1500 height=1000 style="position: absolute;top:100px"></canvas>
+        
+    </div>
+
+    <script src="script2.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-1.9.1.min.js"
+    integrity="sha256-wS9gmOZBqsqWxgIVgA8Y9WcQOa7PgSIX+rPA0VL2rbQ="
+    crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,0 +1,1152 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Base code for this human body project from: https://github.com/lalitbansal457/human-body-canvas 
+    * This included the image file that is being used and the idea of circles as points for selection
+    * The drawing functions have been brought forwards from the sourced project -->
+	<title>Customization Guidance Tool - Placement</title>
+	<script
+  src="http://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+	<style type="text/css">
+		#humanBody, div {
+			float: left;
+
+		}
+		p {
+			display: none;
+			margin-top: 10px;
+		}
+	</style>
+	
+</head>
+<body>
+    <!-- Youtube Search Bar - opens youtube search results in a new tab
+    <div style="position:absolute; left: 360px"> 
+		<form action=http://www.youtube.com/results method=”get”>
+			<label id="search_query_label" for="q">Enter search term:</label>
+			<input name="q" id="q" type=text>
+			<input type=submit id="submitted" value="Search YouTube"/> 
+		</form>
+	</div>
+    -->
+
+
+	<canvas id="humanBody" height="800px" width="350" style="position:relative; left:10px; top: 10px"></canvas>
+    <canvas id ="userSelections" height="100px" width="300px" style="position:absolute; left:1000px; top: 20px;"></canvas>
+
+    <button id="saveButton" disabled style="position:absolute; left:1000px; top:100px;">Generate Model</button>
+
+    <canvas id="alerts" height="1000px" width="700px" style="position:relative; left:10px; top:10px"></canvas>
+
+
+
+    <!--
+    <form action=”http://www.youtube.com/results” method=”get” >
+        <input name=”search_query” type=”text” maxlength=”128″ />
+        <select name=”search_type”>
+            <option value=””>Videos</option>
+            <option value=”search_users”>Channels</option>
+        </select>
+        <input type=”submit” value=”Search” />
+    </form>
+-->
+
+</body>
+
+<script type="text/javascript">
+	var canvas = document.getElementById('humanBody');
+	ctx = canvas.getContext('2d');
+
+    var textCanvas = document.getElementById('userSelections');
+    textctx = textCanvas.getContext('2d');
+
+    var alertsCanvas = document.getElementById('alerts');
+    alertsctx = alertsCanvas.getContext('2d');
+
+	var circles = [];
+    var alerts = [];
+    var selectedPlacements = [];
+    var selectedDevices = [];
+    var selectedMechanisms = [];
+
+    // List of counters for each body part
+    var headCount = 0;
+    var neckCount = 0;
+    var upperarmCount = 0;
+    var torsoCount = 0;
+    var wristCount = 0;
+    var fingersCount = 0;
+    var upperlegCount = 0;
+    var ankleCount = 0;
+
+    var alertlabel = 0;
+    var alertOffset = 0;
+    
+	var canvasW = canvas.offsetWidth;
+	var canvasH = canvas.offsetHeight;
+
+    ctx.fillStyle = "black";
+    ctx.font = "16px Arial";
+    ctx.fillText("Step 1: Select preferred monitor placements.", 0, 20);
+
+	canvas.addEventListener('click', function(e){
+		var clickedX = e.pageX - this.offsetLeft;
+		var clickedY = e.pageY - this.offsetTop;
+		var allP =[];
+
+
+		   for (var i = 0; i < circles.length; i++) {
+		       if (clickedX > circles[i].left && clickedY > circles[i].top1 && clickedX < circles[i].right && clickedY < circles[i].bottom) {
+                    switch(i) {
+                        // In each case: 
+                        // 1. Add the selected body part to the list of potential placements
+                        // 2. Change the colour of the selected body part indicator to red to visualize that it has already been selected
+		               case 0:
+                            if (headCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 125, 60, 5); // top of head
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("head");
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 125, 60, 5); // top of head
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("head");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            headCount = headCount + 1;
+		                    break;
+
+		               case 1:
+                            if (neckCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 128, 145, 5); // neck/necklace
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("neck");
+                                //drawAlerts(ctx, 120, 100, 70, 50);
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 128, 145, 5); // neck/necklace
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("neck");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            neckCount = neckCount + 1;
+		                    break;
+
+                       case 2:
+                            if (upperarmCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 68, 210, 5); //  upper arm
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("upperarm");
+                                /*
+                                if (fingersCount % 2 == 0) {
+                                    alertOffset = 0;
+                                    drawWatchAlerts(alertsctx, true);
+                                }
+                                else {
+                                    alertOffset = 200;
+                                    drawFingerAlerts(alertsctx, true);
+                                    drawWatchAlerts(alertsctx, true);
+                                }
+                                */
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 68, 210, 5); //  upper arm
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("upperarm");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            upperarmCount = upperarmCount + 1;
+		                    break;
+
+                        case 3:
+                            if (torsoCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 128, 290, 5); // torso
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                        	    selectedPlacements.push("torso");
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 128, 290, 5); // torso
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("torso");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            torsoCount = torsoCount + 1;
+		                    break;
+
+                        case 4:
+                            if (wristCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 40, 320, 5); //  lower arm
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("wrist");
+                                //drawWatchAlerts(alertsctx, true);
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 40, 320, 5); //  lower arm
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("wrist");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            wristCount = wristCount + 1;
+		                    break;
+
+                        case 5:
+                            if (fingersCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 20, 380, 5); //  fingers
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("fingers");
+                                //drawFingerAlerts(alertsctx, true);
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 20, 380, 5); //  fingers
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("fingers");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            fingersCount = fingersCount + 1;
+		                    break;
+
+                        case 6:
+                            if (upperlegCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 160, 420, 5); //  upper leg
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("upperleg");
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 160, 420, 5); //  upper leg
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("upperleg");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            upperlegCount = upperlegCount + 1;
+		                    break;
+                       
+                        case 7:
+                            if (ankleCount % 2 == 0) {
+                                ctx.fillStyle = "red";
+                                ctx.fill();
+                                drawCircle(ctx, 172, 540, 5); //  ankle
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                selectedPlacements.push("ankle");
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                                ctx.fill();
+                                drawCircle(ctx, 172, 540, 5); //  ankle
+                                drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+                                let index = selectedPlacements.indexOf("ankle");
+                                if (index > -1) { // only splice array when item is found
+                                    selectedPlacements.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            ankleCount = ankleCount + 1;
+		                    break;
+
+ 		                default:
+                            drawCircle(ctx, 600, 600, 1);
+		           }
+    
+                   alertsctx.clearRect(0, 0, alertsCanvas.width, alertsCanvas.height);
+
+                   
+                   // After a selection has been made, update the list of selected placements in real time
+                   //textctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+                   textctx.clearRect(0, 0, 300, 30);
+                   textctx.font = "14px Arial";
+		           textctx.fillText("Preferred Placements: " + selectedPlacements, 0, 20);
+
+                   alertsctx.fillStyle = "black";
+                    alertsctx.font = "16px Arial";
+                    alertsctx.fillText("Step 2: Select preferred device style.", 0, 20);
+                   
+                   //if (selectedPlacements != "") {
+                        // If the user has selected a placement, draw the alerting mechanism options
+                        showDevices(selectedPlacements);
+                   //}
+                   return
+		       }
+		   }
+	})
+
+    // Setting up a similar system for the alerts canvas to handle selections for types of alert
+    var alertsCanvasW = canvas.offsetWidth;
+	var alertsCanvasH = canvas.offsetHeight;
+
+    var vibrateCount = 0;
+    var soundCount = 0;
+    var lightCount = 0;
+    var graphCount = 0;
+    var numbersCount = 0;
+
+    var device1count = 0;
+    var device2count = 0;
+    var device3count = 0;
+    var device4count = 0;
+    var device5count = 0;
+    var device6count = 0;
+
+    var mechanism1count = 0;
+    var mechanism2count = 0;
+    var mechanism3count = 0;
+    var mechanism4count = 0;
+    var mechanism5count = 0;
+
+    var mechanism = "";
+
+	alertsCanvas.addEventListener('click', function(e){
+		var clickedX = e.pageX - this.offsetLeft;
+		var clickedY = e.pageY - this.offsetTop;
+		var allP =[];
+        var device = "";
+
+        for (var i = 0; i < alerts.length; i++) {
+            if (clickedX > alerts[i].left && clickedY > alerts[i].top1 && clickedX < alerts[i].right && clickedY < alerts[i].bottom) {
+                        switch(i) {                    
+                            case 0: 
+                            device = deviceOrder[0];
+                            console.log(device);
+                            if (device1count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); 
+                                let index = selectedDevices.indexOf(device);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device1count = device1count + 1;
+                                break;
+
+                            case 1:
+                            device = deviceOrder[1];
+                            console.log(device);
+                            if (device2count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); //alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                                //console.log("Device 1 count: " + device1count);
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); //alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                let index = selectedDevices.indexOf(device);
+                                //console.log("removing device: " + device);
+                                //console.log("Device 1 count: " + device1count);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device2count = device2count + 1;
+                                break;
+
+                            case 2:
+                            device = deviceOrder[2];
+                            console.log(device);
+                            if (device3count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100);// alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                                //console.log("Device 1 count: " + device1count);
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); //alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                let index = selectedDevices.indexOf(device);
+                                //console.log("removing device: " + device);
+                                //console.log("Device 1 count: " + device1count);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device3count = device3count + 1;
+                                break;
+
+                            case 3:
+                            device = deviceOrder[3];
+                            console.log(device);
+                            if (device4count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); // alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                                //console.log("Device 1 count: " + device1count);
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100);// alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                let index = selectedDevices.indexOf(device);
+                                //console.log("removing device: " + device);
+                                //console.log("Device 1 count: " + device1count);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device4count = device4count + 1;
+                                break;
+
+                            case 4:
+                            device = deviceOrder[4];
+                            console.log(device);
+                            if (device5count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); //alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                                //console.log("Device 1 count: " + device1count);
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100);//alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                let index = selectedDevices.indexOf(device);
+                                //console.log("removing device: " + device);
+                                //console.log("Device 1 count: " + device1count);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device5count = device5count + 1;
+
+                            case 5:
+                            device = deviceOrder[5];
+                            console.log(device);
+                            if (device6count % 2 == 0) {
+                                alertsctx.lineWidth = 2;
+                                alertsctx.strokeStyle = "red";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100); //alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                selectedDevices.push(device);
+                                showMechanisms();
+                                //console.log("Device 1 count: " + device1count);
+                            }
+                            else {
+                                alertsctx.lineWidth = 0;
+                                alertsctx.strokeStyle = "white";
+                                alertsctx.strokeRect(alerts[i].left, alerts[i].top1, alerts[i].right - 5, 100);//alerts[i].bottom);
+                                //alertsctx.strokeRect(600, 600, 1, 1);
+                                let index = selectedDevices.indexOf(device);
+                                //console.log("removing device: " + device);
+                                //console.log("Device 1 count: " + device1count);
+                                if (index > -1) { // only splice array when item is found
+                                    selectedDevices.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                            if (selectedDevices.length === 0) {
+                                alertsctx.clearRect(300, 0, 250, 800);
+                            }
+                            device6count = device6count + 1;
+                                break;
+
+                            default:
+                                break;
+                        }
+                        textctx.clearRect(0, 25, 300, 50);
+                        textctx.font = "14px Arial";
+                        textctx.fillText("Selected Devices: " + selectedDevices, 0, 40);
+
+                        alertsctx.clearRect(270, 0, 300, 50);
+                        alertsctx.fillStyle = "black";
+                        alertsctx.font = "16px Arial";
+                        alertsctx.fillText("Step 3: Select preferred alert style.", 300, 20);
+                    }
+        }
+
+        for (var i = 0; i < mechanisms.length; i++) {
+            if (clickedX > mechanisms[i].left && clickedY > mechanisms[i].top1 && clickedX < mechanisms[i].right && clickedY < mechanisms[i].bottom) {
+                        switch(i) {                    
+                            case 0: 
+                                mechanism = mechanismOrder[0];
+
+                                if (mechanism1count % 2 == 0) {
+                                    alertsctx.lineWidth = 2;
+                                    alertsctx.strokeStyle = "red";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100);
+                                    selectedMechanisms.push(mechanism);
+                                }
+                                else {
+                                    alertsctx.lineWidth = 0;
+                                    alertsctx.strokeStyle = "white";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100); 
+                                    let index = selectedMechanisms.indexOf(mechanism);
+                                    if (index > -1) { // only splice array when item is found
+                                        selectedMechanisms.splice(index, 1); // 2nd parameter means remove one item only
+                                    }
+                                } 
+                                
+                                mechanism1count = mechanism1count + 1;
+                                break;
+
+                            case 1:
+                                mechanism = mechanismOrder[1];
+                                
+                                if (mechanism2count % 2 == 0) {
+                                    alertsctx.lineWidth = 2;
+                                    alertsctx.strokeStyle = "red";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100);
+                                    selectedMechanisms.push(mechanism);
+                                }
+                                else {
+                                    alertsctx.lineWidth = 0;
+                                    alertsctx.strokeStyle = "white";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100); 
+                                    let index = selectedMechanisms.indexOf(mechanism);
+                                    if (index > -1) { // only splice array when item is found
+                                        selectedMechanisms.splice(index, 1); // 2nd parameter means remove one item only
+                                    }
+                                } 
+                                
+                                mechanism2count = mechanism2count + 1;
+                            
+                                break;
+
+                            case 2: 
+                                mechanism = mechanismOrder[2];
+                                if (mechanism3count % 2 == 0) {
+                                    alertsctx.lineWidth = 2;
+                                    alertsctx.strokeStyle = "red";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100);
+                                    selectedMechanisms.push(mechanism);
+                                }
+                                else {
+                                    alertsctx.lineWidth = 0;
+                                    alertsctx.strokeStyle = "white";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100); 
+                                    let index = selectedMechanisms.indexOf(mechanism);
+                                    if (index > -1) { // only splice array when item is found
+                                        selectedMechanisms.splice(index, 1); // 2nd parameter means remove one item only
+                                    }
+                                } 
+                                
+                                mechanism3count = mechanism3count + 1;
+                            
+                                break;
+
+                            case 3:
+                                mechanism = mechanismOrder[3];
+                                if (mechanism4count % 2 == 0) {
+                                    alertsctx.lineWidth = 2;
+                                    alertsctx.strokeStyle = "red";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100);
+                                    selectedMechanisms.push(mechanism);
+                                }
+                                else {
+                                    alertsctx.lineWidth = 0;
+                                    alertsctx.strokeStyle = "white";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100); 
+                                    let index = selectedMechanisms.indexOf(mechanism);
+                                    if (index > -1) { // only splice array when item is found
+                                        selectedMechanisms.splice(index, 1); // 2nd parameter means remove one item only
+                                    }
+                                } 
+                                
+                                mechanism4count = mechanism4count + 1;
+                            
+                                break;
+
+                            case 4:
+                                mechanism = mechanismOrder[4];
+                                if (mechanism5count % 2 == 0) {
+                                    alertsctx.lineWidth = 2;
+                                    alertsctx.strokeStyle = "red";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100);
+                                    selectedMechanisms.push(mechanism);
+                                }
+                                else {
+                                    alertsctx.lineWidth = 0;
+                                    alertsctx.strokeStyle = "white";
+                                    alertsctx.strokeRect(310, mechanisms[i].top1, 180, 100); 
+                                    let index = selectedMechanisms.indexOf(mechanism);
+                                    if (index > -1) { // only splice array when item is found
+                                        selectedMechanisms.splice(index, 1); // 2nd parameter means remove one item only
+                                    }
+                                } 
+                                
+                                mechanism5count = mechanism5count + 1;
+                            
+                                break;
+
+                            default:
+                                break;
+                        }
+                    textctx.clearRect(0, 50, 300, 50);
+                    textctx.font = "14px Arial";
+                    textctx.fillText("Selected Mechanisms: " + selectedMechanisms, 0, 60);
+
+                    var savePrefs = document.getElementById('saveButton');
+                    savePrefs.disabled = false;
+                    // Function to switch screens to 3d model page when save button is clicked
+                    savePrefs.onclick = function() {
+                        //console.log("Generating model with the following preference selections: " + selectedPlacements + ", " + selectedDevices + ", " + selectedMechanisms);
+                        //window.open("designer.html");
+                        sessionStorage.setItem("placements", selectedPlacements);
+                        sessionStorage.setItem("devices", selectedDevices);
+                        sessionStorage.setItem("mechanisms", selectedMechanisms);
+                        location.replace("designer.html");
+                    }
+
+                }
+        }
+    })
+        
+		function drawImage(onLoad) {
+			// When the image is loaded, draw it
+			if(onLoad){
+				img.onload = function () {
+				    ctx.drawImage(img, 0, 40);
+                    console.log("image drawn");
+				}
+			} else {
+				ctx.drawImage(img, 0, 0);
+			}
+			
+		}
+
+		function draw(ctx, x, y, radius) {
+			ctx.beginPath();
+			ctx.arc(x, y, radius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+        }
+
+		var circle = function(x, y, radius) {
+			this.left = x - radius;
+		    this.top1 = y - radius;
+		    this.right = x + radius;
+		    this.bottom = y + radius;
+		}
+
+        var alert = function(x, y, width, height) {
+            this.left = x;
+            this.top1 = y;
+            this.right = x + width;
+            this.bottom = y + height;
+        }
+
+		function drawCircle(ctx, x, y, radius) {
+			draw(ctx, x, y, radius);
+			var circleCtx = new circle(x, y, radius);
+
+			circles.push(circleCtx);
+			ctx.save();
+		}
+
+        var deviceOrder = [];
+        // Showing devices based on selected placements with altered orders based on selections
+        function showDevices(placements) {
+            alerts = [];
+            deviceOrder = [];
+            
+            var alertctx;
+            var watch = document.createElement('IMG');
+            watch.src = "watch.png";
+
+            var ring = document.createElement('IMG');
+            ring.src = "ring.png";
+
+            var necklace = document.createElement('IMG');
+            necklace.src = "necklace.png";
+
+            var belt = document.createElement('IMG');
+            belt.src = "belt.png";
+
+            var cuff = document.createElement('IMG');
+            cuff.src = "cuff.png";
+
+            var diy = document.createElement('IMG');
+            diy.src = "create.png";
+
+            if (placements.includes("head")) {
+                necklace.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(necklace, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+                cuff.onload = function() {
+                    alertctx = new alert(0, 150, 200, 100);
+                    alertsctx.drawImage(cuff, 0, 150, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.drawImage(diy, 0, 270, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                belt.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(watch, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+            }
+            else if(placements.includes("neck")) {
+                necklace.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(necklace, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(diy, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                cuff.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(cuff, 0, 270, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                belt.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(watch, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+            }
+            else if (placements.includes("torso")) {
+                belt.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(belt, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                cuff.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(cuff, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.drawImage(diy, 0, 270, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                necklace.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(necklace, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(watch, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+            }
+            else if (placements.includes("upperarm")) {
+                cuff.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(cuff, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(watch, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.drawImage(diy, 0, 270, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                belt.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                necklace.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(necklace, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+            }
+            else if (placements.includes("wrist")) {
+                watch.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(watch, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                cuff.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(cuff, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.drawImage(diy, 0, 270, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+                belt.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                necklace.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(necklace, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+            }
+            else if (placements.includes("fingers")) {
+                ring.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(ring, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(diy, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(watch, 0, 270, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                cuff.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(cuff, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }  
+                belt.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                necklace.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(necklace, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                } 
+            }
+            else if (placements.includes("upperleg") || placements.includes("ankle")) {
+                cuff.onload = function() {
+                    alertctx = new alert(0, 40, 200, 100);
+                    alertsctx.drawImage(cuff, 0, 40, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("cuff");
+                }
+                diy.onload = function() {
+                    alertctx = new alert(0, 160, 200, 100);
+                    alertsctx.drawImage(diy, 0, 160, 200, 100);
+                    alerts.push(alertctx);
+                    deviceOrder.push("diy");
+                }
+                watch.onload = function() {
+                    alertctx = new alert(0, 270, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(watch, 0, 270, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("watch");
+                }
+                belt.onload = function() {
+                    alertctx = new alert(0, 380, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(belt, 0, 380, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("belt");
+                }
+                necklace.onload = function() {
+                    alertctx = new alert(0, 490, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(necklace, 0, 490, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("necklace");
+                }
+                ring.onload = function() {
+                    alertctx = new alert(0, 600, 200, 100);
+                    alertsctx.globalAlpha = 0.25;
+                    alertsctx.drawImage(ring, 0, 600, 200, 100);
+                    alertsctx.globalAlpha = 1.0;
+                    alerts.push(alertctx);
+                    deviceOrder.push("ring");
+                }
+            }
+        }
+
+        var mechanisms = [];
+        var mechanismOrder = [];
+        function showMechanisms() {
+            mechanisms = [];
+            mechanismOrder = [];
+            var alertctx;
+            var vibrate = document.createElement('IMG');
+            vibrate.src = "vibrate.png";
+
+            var sound = document.createElement('IMG');
+            sound.src = "sound.png";
+
+            var light = document.createElement('IMG');
+            light.src = "light.png";
+
+            var graph = document.createElement('IMG');
+            graph.src = "graph.png";
+
+            var numbers = document.createElement('IMG');
+            numbers.src = "number.png";
+
+            vibrate.onload = function() {
+                alertctx = new alert(300, 40, 200, 100);
+                alertsctx.drawImage(vibrate, 300, 40, 200, 100);
+                mechanisms.push(alertctx);
+                mechanismOrder.push("vibrate");
+            }
+            sound.onload = function() {
+                alertctx = new alert(300, 160, 200, 100);
+                alertsctx.drawImage(sound, 300, 160, 200, 100);
+                mechanisms.push(alertctx);
+                mechanismOrder.push("sound");
+            }
+            light.onload = function() {
+                alertctx = new alert(300, 270, 200, 100);
+                alertsctx.drawImage(light, 300, 270, 200, 100);
+                mechanisms.push(alertctx);
+                mechanismOrder.push("light");
+            }
+            graph.onload = function() {
+                alertctx = new alert(300, 380, 200, 100);
+                alertsctx.drawImage(graph, 300, 380, 200, 100);
+                mechanisms.push(alertctx);
+                mechanismOrder.push("graph");
+            }
+            numbers.onload = function() {
+                alertctx = new alert(300, 490, 200, 100);
+                alertsctx.drawImage(numbers, 300, 490, 200, 100);
+                mechanisms.push(alertctx);
+                mechanismOrder.push("numbers");
+            }
+            console.log(mechanisms);
+        }
+
+        function hideMechanisms() {
+            alertsctx.clearRect(300, 0, 250, 800);
+        }
+
+        function removeAlerts(ctx, x, y, width, height) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function removeMechanisms(ctx, x, y, width, height) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Create an image element
+		var img = document.createElement('IMG');
+
+        // Specify the src to load the image
+        img.src = "256px-Human_body_silhouette.svg.png";
+
+        function initialize() {
+
+            // Initialize the points of interest that the user may select
+            drawCircle(ctx, 125, 60, 5); // top of head
+            drawCircle(ctx, 128, 145, 5); // neck/necklace
+            drawCircle(ctx, 68, 210, 5); // left upper arm
+            //drawCircle(ctx, 189, 170, 5); // right upper arm
+            drawCircle(ctx, 128, 290, 5); // torso
+            drawCircle(ctx, 40, 320, 5); // left lower arm
+            //drawCircle(ctx, 216, 280, 5); // right lower arm
+            drawCircle(ctx, 20, 380, 5); // left fingers
+            //drawCircle(ctx, 236, 340, 5); // right fingers
+            //drawCircle(ctx, 100, 380, 5); // left upper leg
+            drawCircle(ctx, 160, 420, 5); // right upper leg
+            //drawCircle(ctx, 95, 500, 5); // left ankle
+            drawCircle(ctx, 172, 540, 5); // right ankle
+            drawCircle(ctx, 600, 600, 1); // default circle to prevent errors when clicking on the canvas
+            drawImage(true);
+        }
+
+        initialize();
+
+	</script>
+</html>

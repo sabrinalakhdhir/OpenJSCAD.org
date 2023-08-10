@@ -17,6 +17,7 @@
           min-width: 100%;
           margin: 0px;
           font-family: 'Open Sans', sans-serif;
+          background-color: white;
         }
         noscript{
           text-align: center;
@@ -34,17 +35,21 @@
     </noscript>
     <div id="progress"></div>
     <div id='jscad'></div>
+
     <script language="javascript" src="./dist/jscad-web.min.js"></script> 
+
     <script language="javascript">
       const el1 = document.getElementById('jscad')
       const jscadInst1 = jscadWeb(el1, {name: 'jscad1'})
     </script>
-    <script language="javascript">
+
+    <script defer language="javascript">
       window.addEventListener('beforeunload', (event) => {
         event.preventDefault()
         event.returnValue = ''
       })
     </script>
+
     <script defer src="script2.js"></script>
   </body>
 </html>

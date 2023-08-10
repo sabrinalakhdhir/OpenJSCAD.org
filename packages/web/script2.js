@@ -2,10 +2,17 @@ initialize();
 // Inspired by Battle ship example on Stack Overflow
 // https://stackoverflow.com/questions/18034637/how-to-make-html5-draggable-objects-over-canvas
 
+
+// Create a list for tracking all created notes
+var noteslist = [];
 // Set up the main canvas on which notes will be added
 var canvas = document.getElementById("canvas");
+//var canvas = document.getElementById("renderTarget");
 var ctx = canvas.getContext("2d");
-ctx.strokeStyle = "lightgray";
+//ctx.strokeStyle = "lightgray";
+
+//console.log("Ctx: " + ctx);
+//console.log("Canvas: " + canvas.id);
 
 // Set up the progress bar canvas
 var progress = document.getElementById("progressCanvas");
@@ -14,6 +21,7 @@ progressctx.strokeStyle = "lightgray";
 
 // Determine the offsets of the canvas to support with tracking mouse movement (for dragging of individual notes within the canvas space)
 var canvasOffset = document.getElementById("canvas").getBoundingClientRect();
+//var canvasOffset = document.getElementById("renderTarget").getBoundingClientRect();
 //var canvasOffset = $("#canvas").offset();
 var offsetX = canvasOffset.left;
 var offsetY = canvasOffset.top;
@@ -27,9 +35,6 @@ var progressOffsetY = progressOffset.top;
 var mouseIsDown = false;
 var lastX = 0;
 var lastY = 0;
-
-// Create a list for tracking all created notes
-var noteslist = [];
 
 // Initialize variables for tracking note content and color (based on user type)
 var noteContent = "";
@@ -295,8 +300,9 @@ function makeNote(x, y, width, height, fill, body, user, reply, replyuser, repli
         replies: replies,
         replyusers: replyusers
     }
-	console.log(note);
+	console.log("Note: " + note);
     noteslist.push(note);
+    console.log("Noteslist: " + noteslist);
     return (note);
 }
 
@@ -324,7 +330,7 @@ function drawAllNotes() {
 
         let replieslist = note.replies;
         let replyoffset = 40;
-        console.log(replieslist);
+        console.log("Replies: " + replieslist);
         if (replieslist != undefined || replieslist != null) {
             for (let i = 0; i < replieslist.length; i++) {
                 ctx.fillStyle = note.replyusers[i];
@@ -451,20 +457,21 @@ function handleMouseDown(e) {
             input.type = "text";
             input.style.position = "absolute";
             input.style.zIndex = "1";
-            input.style.left = noteslist[i].right - 140 + "px";
-            input.style.top = noteslist[i].y + 177 + "px";
+            input.style.left = noteslist[i].right + 1120 + "px";
+            input.style.top = noteslist[i].y + 277 + "px";
             input.style.width = "90px";
             input.style.height = "15px";
             input.style.border = "1px solid black";
 
             // Adding a reply button to the bottom of the sticky note
             var button = repliesDiv.appendChild(document.createElement("button"));
+            button.style.fontSize = "10px";
             button.innerHTML = "Reply";
             button.style.position = "absolute";
             button.style.zIndex = "1";
-            button.style.left = noteslist[i].right - 40 + "px";
-            button.style.top = noteslist[i].y + 177 + "px";
-            button.style.width = "45px";
+            button.style.left = noteslist[i].right + 1215 + "px";
+            button.style.top = noteslist[i].y + 277 + "px";
+            button.style.width = "40px";
             button.style.height = "20px";
             button.style.border = "1px solid black";
 
@@ -560,8 +567,10 @@ function restoreProject() {
     }
 }
 
+/*
 function hidenotes() {
     notes = document.getElementById("canvas");
+    //notes = document.getElementById("jscad");
     notes.style.display = "none";
 
     document.getElementById("hide").style.display = "none";
@@ -571,17 +580,23 @@ function hidenotes() {
 
 function shownotes() {
     notes = document.getElementById("canvas");
+    //notes = document.getElementById("jscad");
     notes.style.display = "inline";
 
     document.getElementById("show").style.display = "none";
     let hideButton = document.getElementById("hide");
     hideButton.style.display = "inline";
-
 }
+*/
 
 document.getElementById("canvas").addEventListener("mousedown", handleMouseDown);
 document.getElementById("canvas").addEventListener("mousemove", handleMouseMove);
 document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
+
+
+//document.getElementById("renderTarget").addEventListener("mousedown", handleMouseDown);
+//document.getElementById("renderTarget").addEventListener("mousemove", handleMouseMove);
+//document.getElementById("renderTarget").addEventListener("mouseup", handleMouseUp);
 
 function initialize() {
 
@@ -591,7 +606,7 @@ function initialize() {
     progressBarCanvas.setAttribute("width", "800");
     progressBarCanvas.setAttribute("height", "150");
     progressBarCanvas.style.position = "absolute";
-    progressBarCanvas.style.left = "310px";
+    progressBarCanvas.style.left = "25%";
     progressBarCanvas.style.top = "10px";
 
     var progressBarDiv = document.getElementById("progress");
@@ -614,6 +629,9 @@ function initialize() {
     youtubeSearchButton.setAttribute("id", "submitted");
     youtubeSearchButton.setAttribute("type", "submit");
     youtubeSearchButton.setAttribute("value", "Search Youtube");
+    youtubeSearchButton.setAttribute("width", "100px");
+    youtubeSearchButton.setAttribute("height", "50px");
+    youtubeSearchButton.style.backgroundColor = "#630a00";
 
     youtubeSearchForm.appendChild(youtubeSearchInput);
     youtubeSearchForm.appendChild(youtubeSearchButton);
@@ -621,8 +639,8 @@ function initialize() {
     var youtubeSearchDiv = document.createElement("youtubeSearchDiv");
     youtubeSearchDiv.setAttribute("id", "youtubeSearchDiv");
     youtubeSearchDiv.style.position = "absolute";
-    youtubeSearchDiv.style.left = "1100px";
-    youtubeSearchDiv.style.top = "50px";
+    youtubeSearchDiv.style.right = "150px"; // left 1100
+    youtubeSearchDiv.style.top = "70px";
 
     document.getElementsByTagName("body")[0].appendChild(youtubeSearchDiv);
 
@@ -633,8 +651,9 @@ function initialize() {
     notesFormDiv.setAttribute("id", "notesDiv");
     notesFormDiv.style.position = "absolute";
     notesFormDiv.style.left = "20px";
-    notesFormDiv.style.top = "10px";
+    notesFormDiv.style.top = "50px";
 
+    /*
     var hideNotesButton = document.createElement("button");
     hideNotesButton.setAttribute("id", "hide");
     hideNotesButton.setAttribute("onclick", "hidenotes()");
@@ -644,9 +663,11 @@ function initialize() {
     showNotesButton.setAttribute("id", "show");
     showNotesButton.setAttribute("onclick", "shownotes()");
     showNotesButton.innerHTML = "Show Notes";
+    */
 
     var notesDiv = document.createElement("div");
     notesDiv.setAttribute("id", "notes");
+    notesDiv.style.left = "0px";
 
     var notesForm = document.createElement("form");
     notesForm.setAttribute("id", "notesForm");
@@ -662,31 +683,40 @@ function initialize() {
     noteSubmit.setAttribute("type", "button");
     noteSubmit.setAttribute("value", "Add Note");
     noteSubmit.setAttribute("onclick", "save()");
+    noteSubmit.style.backgroundColor = "#6e6e6e";
 
     notesForm.appendChild(noteText);
     notesForm.appendChild(noteSubmit);
 
     notesDiv.appendChild(notesForm);
 
-    notesFormDiv.appendChild(hideNotesButton);
-    notesFormDiv.appendChild(showNotesButton);
+    //notesFormDiv.appendChild(hideNotesButton);
+    //notesFormDiv.appendChild(showNotesButton);
     notesFormDiv.appendChild(notesDiv);
 
     var repliedCanvasDiv = document.createElement("div");
     repliedCanvasDiv.setAttribute("id", "replies");
     repliedCanvasDiv.style.float = "left";
+    repliedCanvasDiv.style.zIndex = "100";
 
     var repliesCanvas = document.createElement("canvas");
+    //var repliesCanvas = document.getElementById("jscad");
     repliesCanvas.setAttribute("id", "canvas");
-    repliesCanvas.setAttribute("width", "1500");
+    repliesCanvas.setAttribute("width", "650");
     repliesCanvas.setAttribute("height", "1000");
     repliesCanvas.style.position = "absolute";
-    repliesCanvas.style.top = "100px";
-    repliesCanvas.style.left = "0px";
+    repliesCanvas.style.top = "200px";
+    repliesCanvas.style.right = "0px";
 
     repliedCanvasDiv.appendChild(repliesCanvas);
 
     document.getElementsByTagName("body")[0].appendChild(notesFormDiv);
     document.getElementsByTagName("body")[0].appendChild(repliedCanvasDiv);
+
+    var modelCanvas = document.getElementById("jscad");
+    modelCanvas.style.position = "absolute";
+    modelCanvas.setAttribute("width", "700");
+    modelCanvas.style.top = "170px";
+    modelCanvas.style.left = "0px";
 
 }

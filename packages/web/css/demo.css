@@ -29,6 +29,18 @@ body {
   --main-text-color: grey;
 }
 
+#savenotebutton {
+  position: absolute;
+  width: 100px;
+  height: 25px;
+}
+
+#submitted {
+  position: absolute;
+  width: 125px;
+  height: 25px;
+}
+
 /* not demo specific code*/
 .jscad {
   height: 100%;

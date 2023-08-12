@@ -640,7 +640,7 @@ function initialize() {
     youtubeSearchDiv.setAttribute("id", "youtubeSearchDiv");
     youtubeSearchDiv.style.position = "absolute";
     youtubeSearchDiv.style.right = "150px"; // left 1100
-    youtubeSearchDiv.style.top = "70px";
+    youtubeSearchDiv.style.top = "50px";
 
     document.getElementsByTagName("body")[0].appendChild(youtubeSearchDiv);
 

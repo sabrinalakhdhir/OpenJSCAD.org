@@ -41,6 +41,18 @@ body {
   height: 25px;
 }
 
+#viewPrefs {
+  position: absolute;
+  width: 150px;
+  height: 25px;
+}
+
+#back {
+  position: absolute;
+  width: 150px;
+  height: 25px;
+}
+
 /* not demo specific code*/
 .jscad {
   height: 100%;

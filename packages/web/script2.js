@@ -302,7 +302,7 @@ function makeNote(x, y, width, height, fill, body, user, reply, replyuser, repli
     }
 	console.log("Note: " + note);
     noteslist.push(note);
-    console.log("Noteslist: " + noteslist);
+    //console.log("Noteslist: " + noteslist);
     return (note);
 }
 
@@ -330,7 +330,7 @@ function drawAllNotes() {
 
         let replieslist = note.replies;
         let replyoffset = 40;
-        console.log("Replies: " + replieslist);
+        //console.log("Replies: " + replieslist);
         if (replieslist != undefined || replieslist != null) {
             for (let i = 0; i < replieslist.length; i++) {
                 ctx.fillStyle = note.replyusers[i];
@@ -377,6 +377,143 @@ function drawAllNotes() {
     }
 	// Save all notes to local storage automatically 
 	localStorage.setItem("notes", JSON.stringify(noteslist));
+
+    // Checking if the design has been shared with any other users 
+    var share1Check = document.querySelector('#shareButton1');
+    var share2Check = document.querySelector('#shareButton2');
+
+    // Setting checks for who the design has been shared with
+    if (userType == 'pd') {
+        if (share1Check.checked == true) {
+            localStorage.setItem("sharedwithEU", "true");
+        }
+        else {
+            localStorage.setItem("sharedwithEU", "false");
+        }
+
+        if (share2Check.checked == true) {
+            localStorage.setItem("sharedwithHCP", "true");
+
+        }
+        else {
+            localStorage.setItem("sharedwithHCP", "false");
+        }
+    }
+    else if (userType == 'hcp') {
+        if (share1Check.checked == true) {
+            localStorage.setItem("sharedwithEU", "true");
+        }
+        else {
+            localStorage.setItem("sharedwithEU", "false");
+        }
+
+        if (share2Check.checked == true) {
+            localStorage.setItem("sharedwithPD", "true");
+        }
+        else {
+            localStorage.setItem("sharedwithPD", "false");
+        }
+    }
+    else {
+        if (share1Check.checked == true) {
+            localStorage.setItem("sharedwithPD", "true");
+        }
+        else {
+            localStorage.setItem("sharedwithPD", "false");
+        }
+
+        if (share2Check.checked == true) {
+            localStorage.setItem("sharedwithHCP", "true");
+        }
+        else {
+            localStorage.setItem("sharedwithHCP", "false");
+        }
+    }
+
+    // Checking if the approval checkbox has been selected
+    const approvalCheck = document.querySelector('#approvalButton');
+    //console.log(approvalButton.checked);
+
+    console.log("User type: " + userType);
+
+    userType = loginUser;
+    // Setting checks for who the design has been approved by
+    if (approvalButton.checked == true) {
+        if (userType == 'pd') {
+            localStorage.setItem("pdApproval", "true");
+        }
+        else if (userType == 'hcp') {
+            localStorage.setItem("hcpApproval", "true");
+        }
+        else {
+            localStorage.setItem("euApproval", "true");
+        }
+    }
+    else {
+        if (userType == 'pd') {
+            localStorage.setItem("pdApproval", "false");
+        }
+        else if (userType == 'hcp') {
+            localStorage.setItem("hcpApproval", "false");
+        }
+        else {
+            localStorage.setItem("euApproval", "false");
+        }
+    }
+}
+
+// Function to check if the design has been approved by all three user groups
+function checkApproval() {
+    var pdApproval = localStorage.getItem("pdApproval");
+    var hcpApproval = localStorage.getItem("hcpApproval");
+    var euApproval = localStorage.getItem("euApproval");
+
+    console.log("PD Approval: " + pdApproval);
+    console.log("HCP Approval: " + hcpApproval);
+    console.log("EU Approval: " + euApproval);
+
+    if (pdApproval == "true" && hcpApproval == "true" && euApproval == "true") {
+        console.log("The design has been approved by all three user groups. The design can now be exported for production.");
+    }
+}
+
+// Function to check if the design has been shared with any other users
+// If it has been shared to both options already, make the I approve button visible to users 
+function checkShares() {
+    var sharedwithEU = localStorage.getItem("sharedwithEU");
+    var sharedwithPD = localStorage.getItem("sharedwithPD");
+    var sharedwithHCP = localStorage.getItem("sharedwithHCP");
+
+    if (userType == 'pd') {
+        if (sharedwithEU == "true" && sharedwithHCP == "true") {
+            document.getElementById("approvalButton").style.display = "inline";
+            document.getElementById("approvalLabel").style.display = "inline";
+        }
+        else {
+            document.getElementById("approvalButton").style.display = "none";
+            document.getElementById("approvalLabel").style.display = "none";
+        }
+    }
+    else if (userType == 'hcp') {
+        if (sharedwithEU == "true" && sharedwithPD == "true") {
+            document.getElementById("approvalButton").style.display = "inline";
+            document.getElementById("approvalLabel").style.display = "inline";
+        }
+        else {
+            document.getElementById("approvalButton").style.display = "none";
+            document.getElementById("approvalLabel").style.display = "none";
+        }
+    }
+    else {
+        if (sharedwithPD == "true" && sharedwithHCP == "true") {
+            document.getElementById("approvalButton").style.display = "inline";
+            document.getElementById("approvalLabel").style.display = "inline";
+        }
+        else {
+            document.getElementById("approvalButton").style.display = "none";
+            document.getElementById("approvalLabel").style.display = "none";
+        }
+    }
 }
 
 function reloadDesigner() {
@@ -399,7 +536,7 @@ function drawNote(note) {
 
 // Function to show user-selected preferences from the previous screen
 function showPrefs() {
-    ctx.clearRect(0, 0, 300, 120);
+    ctx.clearRect(0, 0, 300, 50);
     //var selectedPlacements = sessionStorage.getItem('placements');
     //var selectedDevices = sessionStorage.getItem('devices');
     //var selectedMechanisms = sessionStorage.getItem('mechanisms');
@@ -412,14 +549,14 @@ function showPrefs() {
 	var devicesList = JSON.parse(selectedDevices);
 	var mechanismsList = JSON.parse(selectedMechanisms);
 
-	console.log("placements: " + placementsList);
-	console.log("devices: " + devicesList);
-	console.log("mechanisms: " + mechanismsList);
+	//console.log("placements: " + placementsList);
+	//console.log("devices: " + devicesList);
+	//console.log("mechanisms: " + mechanismsList);
 
-    ctx.font = "14px Arial";
-	ctx.fillText("Preferred Placements: " + placementsList, 10, 70);
-    ctx.fillText("Preferred Devices: " + devicesList, 10, 90);
-    ctx.fillText("Preferred Alerting Mechanisms: " + mechanismsList, 10, 110);
+    ctx.font = "10px Arial";
+	ctx.fillText("Preferred Placements: " + placementsList, 10, 30);
+    ctx.fillText("Preferred Devices: " + devicesList, 10, 40);
+    ctx.fillText("Preferred Alerting Mechanisms: " + mechanismsList, 10, 50);
 
 }
 
@@ -499,6 +636,7 @@ function handleMouseDown(e) {
             mouseIsDown = false;
         }
     }
+    checkShares();
     // Redrawing all the notes to reflect reply changes
     drawAllNotes();
     // Call function to reload window
@@ -536,6 +674,8 @@ function handleMouseMove(e) {
     lastX = mouseX;
     lastY = mouseY;
 
+    checkShares();
+
     drawAllNotes();
     // Call function to reload window
     //reloadDesigner();
@@ -544,7 +684,7 @@ function handleMouseMove(e) {
 function saveProject() {
     // Save notes to local storage
     localStorage.setItem("notes", JSON.stringify(noteslist));
-    console.log(JSON.stringify(noteslist));
+    //console.log(JSON.stringify(noteslist));
 
 }
 
@@ -553,7 +693,7 @@ function restoreProject() {
     var retrievedNotes = localStorage.getItem("notes");
     var retrievedNotesList = [];
     retrievedNotesList = JSON.parse(retrievedNotes);
-    console.log(retrievedNotesList);
+    //console.log(retrievedNotesList);
 
     noteslist = retrievedNotesList;
 
@@ -562,7 +702,7 @@ function restoreProject() {
         drawAllNotes();
     }
     if (noteslist === null) {
-    	console.log("no notes to draw yet");
+    	//console.log("no notes to draw yet");
 	noteslist = [];
     }
 }
@@ -600,6 +740,8 @@ document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
 
 function initialize() {
 
+    //document.getElementById("jscad").style.opacity = "0.5";
+    
     // Progress bar
     var progressBarCanvas = document.createElement("canvas");
     progressBarCanvas.setAttribute("id", "progressCanvas");
@@ -677,6 +819,7 @@ function initialize() {
     noteText.setAttribute("type", "text");
     noteText.setAttribute("name", "note");
     noteText.setAttribute("placeholder", "Enter note here");
+    noteText.style.top = "0px";
 
     var noteSubmit = document.createElement("input");
     noteSubmit.setAttribute("id", "savenotebutton");
@@ -684,9 +827,35 @@ function initialize() {
     noteSubmit.setAttribute("value", "Add Note");
     noteSubmit.setAttribute("onclick", "save()");
     noteSubmit.style.backgroundColor = "#6e6e6e";
+    noteSubmit.style.top = "0px";
+
+    var viewPrefs = document.createElement("input");
+    viewPrefs.setAttribute("id", "viewPrefs");
+    viewPrefs.setAttribute("type", "button");
+    viewPrefs.setAttribute("value", "View Preferences");
+    viewPrefs.setAttribute("onclick", "showPrefs()");
+    viewPrefs.style.top = "40px";
+    viewPrefs.style.right = "1px";
+    viewPrefs.style.backgroundColor = "#6e6e6e";
+
+    // Only allow the user to go back to the customization tool if they are an enduser
+    let userType = sessionStorage.getItem('usertype');
+    if (userType != 'pd' && userType != 'hcp') {
+        var back = document.createElement("input");
+        back.setAttribute("id", "back");
+        back.setAttribute("type", "button");
+        back.setAttribute("value", "Change my Selections");
+        back.setAttribute("onclick", "window.location.href='updatedcustomization.html'");
+        back.style.right = "1px";
+        back.style.top = "80px";
+        back.style.backgroundColor = "#dbdbdb";
+        youtubeSearchForm.appendChild(back);
+    }
 
     notesForm.appendChild(noteText);
     notesForm.appendChild(noteSubmit);
+
+    youtubeSearchForm.appendChild(viewPrefs);
 
     notesDiv.appendChild(notesForm);
 
@@ -719,4 +888,93 @@ function initialize() {
     modelCanvas.style.top = "170px";
     modelCanvas.style.left = "0px";
 
+    var approvalDiv = document.createElement("div");
+    approvalDiv.setAttribute("id", "approvalDiv");
+    approvalDiv.style.position = "absolute";
+    approvalDiv.style.right = "13%";
+    approvalDiv.style.top = "95%";
+    approvalDiv.style.zIndex = "100";
+
+    var approvalForm = document.createElement("form");
+    notesForm.setAttribute("id", "approvalForm");
+
+    var approvalButton = document.createElement("input");
+    approvalButton.setAttribute("id", "approvalButton");
+    approvalButton.setAttribute("type", "checkbox");
+    approvalButton.setAttribute("name", "approval");
+    approvalButton.setAttribute("value", "approved");
+    approvalButton.style.display = "none";
+
+    var approvalLabel = document.createElement("label");
+    approvalLabel.setAttribute("id", "approvalLabel");
+    approvalLabel.setAttribute("for", "approval");
+    approvalLabel.innerHTML = "I am happy with this design!";
+    approvalLabel.style.fontStyle = "bold";
+    approvalLabel.style.display = "none";
+
+    approvalForm.appendChild(approvalButton);
+    approvalForm.appendChild(approvalLabel);
+
+    approvalDiv.appendChild(approvalForm);
+
+    document.getElementsByTagName("body")[0].appendChild(approvalDiv);
+
+    var shareDiv = document.createElement("div");
+    shareDiv.setAttribute("id", "shareDiv");
+    shareDiv.style.position = "absolute";
+    shareDiv.style.right = "3%";
+    shareDiv.style.top = "90%";
+    shareDiv.style.zIndex = "100";
+
+    var shareForm = document.createElement("form");
+    shareForm.setAttribute("id", "shareForm");
+
+    var shareButton1 = document.createElement("input");
+    shareButton1.setAttribute("id", "shareButton1");
+    shareButton1.setAttribute("type", "checkbox");
+    shareButton1.setAttribute("name", "share1");
+    shareButton1.setAttribute("value", "share1");
+
+    var shareButton2 = document.createElement("input");
+    shareButton2.setAttribute("id", "shareButton2");
+    shareButton2.setAttribute("type", "checkbox");
+    shareButton2.setAttribute("name", "share2");
+    shareButton2.setAttribute("value", "share2");
+
+    var shareLabel1 = document.createElement("label");
+    var shareLabel2 = document.createElement("label");
+
+    var linebreak = document.createElement("br");
+
+    if (userType == 'pd'){
+        shareLabel1.setAttribute("for", "share1");
+        shareLabel1.innerHTML = "Share this design with end-users";
+
+        shareLabel2.setAttribute("for", "share2");
+        shareLabel2.innerHTML = "Share this design with health care professionals";
+
+    }
+    else if (userType == 'hcp') {
+        shareLabel1.setAttribute("for", "share1");
+        shareLabel1.innerHTML = "Share this design with end-users";
+
+        shareLabel2.setAttribute("for", "share2");
+        shareLabel2.innerHTML = "Share this design with product designers";
+    }
+    else {
+        shareLabel1.setAttribute("for", "share1");
+        shareLabel1.innerHTML = "Share this design with product designers";
+
+        shareLabel2.setAttribute("for", "share2");
+        shareLabel2.innerHTML = "Share this design with health care professionals";
+    }
+
+    shareForm.appendChild(shareButton1);
+    shareForm.appendChild(shareLabel1);
+    shareForm.appendChild(linebreak);
+    shareForm.appendChild(shareButton2);
+    shareForm.appendChild(shareLabel2);
+    shareDiv.appendChild(shareForm);
+    document.getElementsByTagName("body")[0].appendChild(shareDiv);
+    
 }

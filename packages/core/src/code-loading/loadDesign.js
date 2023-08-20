@@ -17,6 +17,7 @@ const getAllParameterDefintionsAndValues = require('../parameters/getParameterDe
 const loadDesign = (mainPath, apiMainPath, filesAndFolders, parameterValuesOverride) => {
   // transform the source if passed non-javascript content, i.e. stl
   filesAndFolders = transformSources({ apiMainPath }, filesAndFolders)
+  console.log('filesAndFolders:', filesAndFolders);
 
   if (filesAndFolders.length > 1) {
     // this only happens if several files were dragNdrop

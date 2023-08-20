@@ -9,7 +9,7 @@ const docBlock = new DocBlock()
 const ignoreExamples = { Imports: 1, Projects: 1 }
 
 const copyAndProcessExamples = (examplesSrc) => {
-  const examples = { 'Creating Shapes': [], 'Manipulating Shapes': [], Colors: [], Parameters: [], Other: [] }
+  const examples = { 'Models': [], 'Manipulating Shapes': [], Colors: [], Parameters: [], Other: [] }
   const examplesDist = 'examples'
   if (fs.existsSync(examplesSrc)) {
     console.log('Copying Examples...', examplesSrc)

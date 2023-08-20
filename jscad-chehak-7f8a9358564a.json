@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "jscad-chehak",
+  "private_key_id": "7f8a9358564a10cbc11b3154954dc920efd0dc7d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCelA8aKPohxDFc\nDVfW0Odu1n0X3uNj3tqY0nVKAXf+AUXKPCyjNj6BzVhJbpfHQgG+yN0hTEDgok55\nRSve2++jqTC7Z7tt3vyB0K6488PdAhyTriDBXgtkO5PvaxuqCfdKQGkxxhlXfetZ\nTRK4Mqgi+vJUPZM1k0AVdxZUSBTsmqoPDAnizdHmnWORYgn28cNdyZmgOTdZeE2O\n9TQqY4NRFpXDEHAVc2DS4TYTNIvkzEL+IQQYGMcSDeCUb/uxRmBaqlLspPRaoCgr\nbHvemxTrszpPT3991K/1Oq0bpaxOqJLexSVGGagceNO5ax8HBvRfz4KTCfVevibP\nkHqxr7hhAgMBAAECggEAAOprFKgnSxv/WrgpQWBdEMHYcLOI2bwZBCxFcP0ljqv+\nVZzPt2zOEzjuxURIKDZ2bP4LEFjY0E9Bn5/FkUSw+1+EDHX8siWJLNz6EE94imF7\nbaMiFWnEDDLvn5CdVRfYA6fP77GUloGvsukf9jw1JjgPn4rIO4VHV8Rjdq7An63h\n3rNYy1PpLae7rOp9Jdq6g1QLmMMGYLqt4HvUUTDPeD4C39LsAJCw7/ksmHhwK0Pc\nK273+IyerR5GtMloQX3SRBrIsteIT9Fv8QE8KSRuLuIyZtUrTEDnlvxtcXPlpDaS\nDRiSkeBh/+0N2Hebn1yEruSIHGA5zgz5Gq4oxRY18QKBgQDcwcYKVHUM4XAMCRGh\n+cHCDknk44w5LHl19dEgCSY0JtX8yBeK+UE1+viUr3YMpiDZ7UB1085DJze5xzA6\n/YaCs5HxIYkDWWOpEloMO3ViAYFZHUtabZWwUifg9U3LGj2CV7VsTG1RXtWRtju0\njmPoReSbgTIYjWRiuFtF0y/M8QKBgQC35RPxfF3BIM2RRPqpy/lCQUvA3/BVZQ+u\nmqZ5q7OqtLq0ksPo913sqpg2Emsnt2Yout9aH96itF71a2F2cahE3SLqcFlE3F6b\n+LGW6bvoZZqqbIZcVRD6Yj9zJhIj2L2VbM6VypBkOvV55Blpj9Zi4Dr6EsHMJFNc\nknwOx0JicQKBgA9d5b0+V8+Hudb8op+V1Sj++aHXPSGVuPa/H8mNGX2z3l10SD9C\nTonFaJxhAmSrA8pnu374OXlvN2/VL8RLdZuPiG8ymGkFRey0/FOxp+Aknq5nXaFz\n02Gstl3wdXPX5cQ2+sgJIeryIQe9mbZd2xKGGv3AJo6S+RPuJVxc8QzhAoGANKmV\nnIJRFw2d0Qw//IA9UYwBdaqr2MioRQhkxFM3kJtRHIUrNXwhmbUBAfskVKtgxik9\n7UFTMKUWzJGDx7ekyJPLe/fQmLfDIEeIE/+7oEH4mPWbRLXXttyL7x3n8/wNzszq\nHFt2Hj4ELnP0Exbt/kLYoOTeOufsN4Z7oH/PswECgYBZAXBF+bVTsNNm4nw1aKdo\nPscuJWqJ/08THVggEsvEPFxBfb677ne610LYtd0o4tcW9UF/YHluO1nttNqz7iIc\nKxrTKIraNXEPpNIPHyar81eDyaBVz6Pf8Rnqp4p45ziQCX44AG3OJnm3+ZESc7Dw\nLeNoKBe9kUbXAgC/WqgqLw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "share-file@jscad-chehak.iam.gserviceaccount.com",
+  "client_id": "105334521602468325368",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/share-file%40jscad-chehak.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

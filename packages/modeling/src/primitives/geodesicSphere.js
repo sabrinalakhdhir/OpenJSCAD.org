@@ -5,7 +5,7 @@ const geom3 = require('../geometries/geom3')
 
 const polyhedron = require('./polyhedron')
 
-const { isGTE } = require('./commonChecks')
+const { isGT, isGTE } = require('./commonChecks')
 
 /**
  * Construct a geodesic sphere based on icosahedron symmetry.

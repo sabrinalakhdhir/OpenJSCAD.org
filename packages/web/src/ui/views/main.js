@@ -1,4 +1,5 @@
 const html = require('nanohtml')
+const FileSaver = require('file-saver');
 
 const dom = (state, i18n, paramsCallbacktoStream, editorCallbackToStream) => {
   const i18nFake = (x) => x
@@ -10,8 +11,10 @@ const dom = (state, i18n, paramsCallbacktoStream, editorCallbackToStream) => {
   const status = require('./status')(state, i18n)
   const help = require('./help')(state, i18n)
 
-  const io = require('./io')(state, i18n)
+  const io = require('./io.js')(state, i18n, editorCallbackToStream)
+
   const editor = require('./editor').editorWrapper(state, editorCallbackToStream, i18n)
+
   const toolBar = require('./toolbar')(state, i18n)
 
   const viewer = require('./viewer')(state, i18n)
@@ -26,37 +29,40 @@ const dom = (state, i18n, paramsCallbacktoStream, editorCallbackToStream) => {
   }
 
   const output = html`
-  <div id='container'>
-    <div id='header'>
-      <span id='jscadName'>
-        <h3>JSCAD</h3>
-      </span>
-      <span id='designName'>
-        <h3>${state.design.name}</h3>
-      </span>
-      ${io}
+    <div id='container'>
+      <div id='header'>
+        <span id='jscadName'>
+          <h3>JSCAD</h3>
+        </span>
+        <span id='designName'>
+          <h3>${state.design.name}</h3>
+        </span>
+        ${toolBar}
+        ${io}
+      </div>
+      ${viewerControls}
+      
+
+      <!-- bare bones essentials -->
+      <!--Status information/errors-->
+      ${status}
+
+      <!--Viewer-->
+      ${viewer}
+
+      <!--Params-->
+      ${parameters}
+      <!-- Options Popup -->
+      ${options}
+      <!-- Editor Popup -->
+      ${state.activeTool === 'editor' ? editor : ''}
+      <!-- Help Popup -->
+      ${help}
+      
+
+      
+
     </div>
-
-    ${toolBar}
-    ${viewerControls}
-
-    <!-- bare bones essentials -->
-    <!--Status information/errors-->
-    ${status}
-
-    <!--Viewer-->
-    ${viewer}
-
-    <!--Params-->
-    ${parameters}
-    <!-- Options Popup -->
-    ${options}
-    <!-- Editor Popup -->
-    ${state.activeTool === 'editor' ? editor : ''}
-    <!-- Help Popup -->
-    ${help}
-
-  </div>
   `
 
   return output

@@ -1,8 +1,8 @@
 const html = require('nanohtml')
-
 const CodeMirror = require('codemirror')
 require('codemirror/mode/javascript/javascript')
 require('codemirror/addon/hint/javascript-hint')
+
 
 const editorOptions = {
   mode: 'javascript',
@@ -33,18 +33,18 @@ const createFileTree = (editor) => {
 const createWrapper = (state, callbackToStream) => {
   if (!wrapper) {
     wrapper = html`
-    <section class='popup-menu' id='editor' key='editor' style='visibility:${state.activeTool === 'editor' ? 'visible' : 'hidden'}'>
-    <textarea>
-    </textarea>
-    <p style='position:absolute;top:0rem;right:1rem;color:gray;user-select:none'>
-      Press 'shift + enter' to render!
-    </p>
-    </section>
+      <section class='popup-menu' id='editor' key='editor' style='visibility:${state.activeTool === 'editor' ? 'visible' : 'hidden'}'>
+        <textarea></textarea>
+        <p style='position:absolute;top:0rem;right:1rem;color:gray;user-select:none'>
+          Press 'shift + enter' to render!
+        </p>
+      </section>
     `
     wrapper.onkeydown = (e) => e.stopPropagation()
     wrapper.onkeyup = (e) => e.stopPropagation()
 
     // and add the editor
+    // console.log("editorOptions: ", wrapper.firstChild, editorOptions)
     editor = CodeMirror.fromTextArea(wrapper.firstChild, editorOptions)
 
     editor.setOption('extraKeys', {
@@ -71,6 +71,7 @@ const createWrapper = (state, callbackToStream) => {
  * Note: Only the contents of javascript files are loaded into the editor. No external formats.
  */
 const editorWrapper = (state, editorCallbackToStream) => {
+  // console.log("editorWrapper: ", state.design.parameterValues, editorCallbackToStream)
   const el = createWrapper(state, editorCallbackToStream)
 
   // and adjust the state
@@ -132,6 +133,23 @@ const editorWrapper = (state, editorCallbackToStream) => {
   return el
 }
 
+/*
+ * Get the source code from the editor
+ */
+const getEditorSourceCode = () => {
+  if (editor) {
+    return editor.getValue()
+  }
+  return null
+}
+
+//set the source code based on input using input from io.js
+const setEditorSourceCode = (source) => { editor.setValue(source) }
+
+
+
 module.exports = {
-  editorWrapper
+  editorWrapper,
+  getEditorSourceCode,
+  setEditorSourceCode
 }

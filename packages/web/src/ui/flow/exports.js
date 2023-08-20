@@ -17,6 +17,7 @@ const reducers = {
   },
 
   setExportFormat: (state, exportFormat) => {
+    console.log('exporting data to:', state, exportFormat )
     const io = Object.assign({ }, state.io, exportFilePathFromFormatAndDesign(state.design, exportFormat), { exportFormat })
     return { io }
   },
@@ -29,6 +30,7 @@ const reducers = {
     const blob = solidsAsBlob(solids, { format })
     // FIXME: BAD ! does not use side effects!
     // fs.writeFileSync(filePath, buffer)
+    console.log('exporting data to:', exportFilePath)
     saveAs(blob, exportFilePath)
     // return { io }
   }
@@ -45,10 +47,24 @@ const actions = ({ sources }) => {
     .map((payload) => Object.assign({}, { type: 'changeExportFormat', sink: 'state' }, { state: payload }))
     .multicast()
 
+  // const requestExport$ = sources.dom.select('#exportBtn').events('click')
+  //   .thru(withLatestFrom(reducers.requestExport, sources.state))
+  //   .map((data) => (
+  //     { type: 'exportRequested', data },
+  //     console.log('exporting data to', sources.state)
+  //     ))
   const requestExport$ = sources.dom.select('#exportBtn').events('click')
     .thru(withLatestFrom(reducers.requestExport, sources.state))
-    .map((data) => ({ type: 'exportRequested', data }))
+    .map((data) => {
+      // Generate the shareable link instead of exporting to the system
+      const shareableLink = data; // Replace with your actual shareable link generation code
+      console.log('exporting data to', sources.state)
 
+      // Emit an action object with the type 'exportRequested' and the shareable link as the data payload
+      return { type: 'exportRequested', data: shareableLink };
+    });
+    
+    
   return { initializeExports$, requestExport$, changeExportFormat$ }
 }
 

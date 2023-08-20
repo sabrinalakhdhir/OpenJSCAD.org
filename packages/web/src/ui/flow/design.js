@@ -67,6 +67,17 @@ const actions = ({ sources }) => {
       })
       .tap((x) => console.log('load example', x)),
 
+      // load example from click
+    sources.dom.select('.electronics').events('click')
+    .map((event) => event.target.dataset.path)
+    .map((url) => {
+      const urlData = new URL(url)
+      const urls = url ? [url] : []
+      const { protocol, origin } = urlData
+      return { sink: protocol.replace(':', ''), urls, origin }
+    })
+    .tap((x) => console.log('add electronics', x)),
+
     // load files from selection (file list)
     sources.dom.select('#fileLoader').events('change')
       .tap((x) => console.log('selected directory', x))

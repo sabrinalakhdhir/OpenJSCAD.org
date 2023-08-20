@@ -580,7 +580,12 @@ var canvas = document.getElementById('humanBody');
                             sessionStorage.setItem("mechanisms", selectedMechanisms);
                             sessionStorage.setItem("phase", phase);
                             //location.replace("designer.html");
-                            location.replace("demo.html");
+                            if (selectedDevices.includes("Create your own")) {
+                                location.replace("../utils/regl-renderer/demov1.html");
+                            }
+                            else {
+                                location.replace("demo\ copy.html");
+                            }
 			    localStorage.setItem("placements", JSON.stringify(selectedPlacements));
 			    localStorage.setItem("devices", JSON.stringify(selectedDevices));
 			    localStorage.setItem("mechanisms", JSON.stringify(selectedMechanisms));

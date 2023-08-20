@@ -1,5 +1,3 @@
-
-
 initializeLogin();
 const loginForm = document.getElementById("login-form");
 const loginButton = document.getElementById("login-form-submit");
@@ -81,8 +79,6 @@ loginButton.addEventListener("click", (e) => {
     } else if (username === "productdesigner" && password === "pd1") {
         user = "pd";
         sessionStorage.setItem("usertype", user);
-        //alert("You have successfully logged in as a product designer.");
-        //location.replace("designer.html");
 
         // Redirect the product designer based on whether or not the design currently being worked on has been shared with them
         var checkSharePD = localStorage.getItem("sharedwithPD");
@@ -91,22 +87,20 @@ loginButton.addEventListener("click", (e) => {
             location.replace("home.html");
         }
         else {
-            location.replace("demo.html");
+            location.replace("../utils/regl-renderer/demov1.html");
         }
     }
     else if (username === "healthcareprof" && password === "hcp1") {
         user = "hcp";
         sessionStorage.setItem("usertype", user);
-        //alert("You have successfully logged in as a health care professional.");
-        //location.replace("designer.html");
-
+        
         // Redirect the heatlh care professional based on whether or not the design currently being worked on has been shared with them
         var checkShareHCP = localStorage.getItem("sharedwithHCP");
         if (checkShareHCP == false) {
             location.replace("home.html");
         }
         else {
-            location.replace("demo.html");
+            location.replace("../utils/regl-renderer/demov1.html");
         }
     }
     else {

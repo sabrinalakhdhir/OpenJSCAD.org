@@ -1,3 +1,4 @@
+
 .jscad1{
   position: relative;
   width: 100%;
@@ -21,6 +22,10 @@ html{
   height: 100%;
 }
 
+.right {
+  right: 0px;
+}
+
 body {
   height: 100%;
   min-height: 100%;
@@ -29,6 +34,38 @@ body {
   --main-text-color: grey;
 }
 
+/* CSS */
+#savenotebutton {
+  background-color: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  border-radius: 4px;
+  color: #3c4043;
+  cursor: pointer;
+  font-family: arial,sans-serif;
+  font-size: 14px;
+  height: 36px;
+  line-height: 27px;
+  min-width: 54px;
+  padding: 0 16px;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: pre;
+}
+
+#savenotebutton:hover {
+  border-color: #dadce0;
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+  color: #202124;
+}
+
+#savenotebutton:focus {
+  border-color: #4285f4;
+  outline: none;
+}
+
+/*
 #savenotebutton {
   position: absolute;
   width: 100px;
@@ -52,7 +89,7 @@ body {
   width: 150px;
   height: 25px;
 }
-
+*/
 /* not demo specific code*/
 .jscad {
   height: 100%;
@@ -84,9 +121,9 @@ body {
 
 #renderTarget {
   cursor: move;
-  width: 100%;
+  width: 5;
   height: 100%;
-  position: absolute;
+  /* position: absolute; */
   top: 0px;
   left: 0px;
   right: 0px;
@@ -100,6 +137,7 @@ body {
   overflow: hidden;
   position: absolute;
 }
+
 #fileLoader + label {
   background: none;
   box-shadow: none;
@@ -376,7 +414,7 @@ a.external-link {
   padding: 4px 0 0 0;
 }
 
-
+/*
 button {
   background: none;
   box-shadow: none;
@@ -429,7 +467,7 @@ input[type="checkbox"] {
 input[type="checkbox"]:hover{
   background-color:rgba(0, 188, 212, 0.6);
 }
-
+*/
 /*themes ?? not sure, not used yet*/
 .light{
   color:black;

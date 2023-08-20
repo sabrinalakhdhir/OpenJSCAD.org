@@ -310,6 +310,7 @@ function makeNote(x, y, width, height, fill, body, user, reply, replyuser, repli
 // Will redraw all notes each time a new note is added
 // Will keep accurate track of the content for each note
 function drawAllNotes() {
+    userType = loginUser;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < noteslist.length; i++) {
         var note = noteslist[i]
@@ -379,64 +380,74 @@ function drawAllNotes() {
 	localStorage.setItem("notes", JSON.stringify(noteslist));
 
     // Checking if the design has been shared with any other users 
-    var share1Check = document.querySelector('#shareButton1');
-    var share2Check = document.querySelector('#shareButton2');
+    var share1Check = document.getElementById("shareButton1").checked;//document.querySelector('#shareButton1');
+    var share2Check = document.getElementById("shareButton2").checked;//document.querySelector('#shareButton2');
 
     // Setting checks for who the design has been shared with
     if (userType == 'pd') {
-        if (share1Check.checked == true) {
+        if (share1Check == true) {
             localStorage.setItem("sharedwithEU", "true");
+            localStorage.setItem("checked1", true);
         }
         else {
             localStorage.setItem("sharedwithEU", "false");
+            localStorage.setItem("checked1", false);
         }
 
-        if (share2Check.checked == true) {
+        if (share2Check == true) {
             localStorage.setItem("sharedwithHCP", "true");
+            localStorage.setItem("checked2", true);
 
         }
         else {
             localStorage.setItem("sharedwithHCP", "false");
+            localStorage.setItem("checked2", false);
         }
     }
     else if (userType == 'hcp') {
-        if (share1Check.checked == true) {
+        if (share1Check == true) {
             localStorage.setItem("sharedwithEU", "true");
+            localStorage.setItem("checked1", true);
         }
         else {
             localStorage.setItem("sharedwithEU", "false");
+            localStorage.setItem("checked1", false);
         }
 
-        if (share2Check.checked == true) {
+        if (share2Check == true) {
             localStorage.setItem("sharedwithPD", "true");
+            localStorage.setItem("checked2", true);
         }
         else {
             localStorage.setItem("sharedwithPD", "false");
+            localStorage.setItem("checked2", false);
         }
     }
     else {
-        if (share1Check.checked == true) {
+        if (share1Check == true) {
             localStorage.setItem("sharedwithPD", "true");
+            localStorage.setItem("checked1", true);
         }
         else {
             localStorage.setItem("sharedwithPD", "false");
+            localStorage.setItem("checked1", false);
         }
 
-        if (share2Check.checked == true) {
+        if (share2Check == true) {
             localStorage.setItem("sharedwithHCP", "true");
+            localStorage.setItem("checked2", true);
         }
         else {
             localStorage.setItem("sharedwithHCP", "false");
+            localStorage.setItem("checked2", false);
         }
     }
+
 
     // Checking if the approval checkbox has been selected
     const approvalCheck = document.querySelector('#approvalButton');
     //console.log(approvalButton.checked);
 
-    console.log("User type: " + userType);
-
-    userType = loginUser;
     // Setting checks for who the design has been approved by
     if (approvalButton.checked == true) {
         if (userType == 'pd') {
@@ -460,6 +471,8 @@ function drawAllNotes() {
             localStorage.setItem("euApproval", "false");
         }
     }
+
+    checkApproval();
 }
 
 // Function to check if the design has been approved by all three user groups
@@ -467,10 +480,6 @@ function checkApproval() {
     var pdApproval = localStorage.getItem("pdApproval");
     var hcpApproval = localStorage.getItem("hcpApproval");
     var euApproval = localStorage.getItem("euApproval");
-
-    console.log("PD Approval: " + pdApproval);
-    console.log("HCP Approval: " + hcpApproval);
-    console.log("EU Approval: " + euApproval);
 
     if (pdApproval == "true" && hcpApproval == "true" && euApproval == "true") {
         console.log("The design has been approved by all three user groups. The design can now be exported for production.");
@@ -484,8 +493,12 @@ function checkShares() {
     var sharedwithPD = localStorage.getItem("sharedwithPD");
     var sharedwithHCP = localStorage.getItem("sharedwithHCP");
 
+    pdApproval = localStorage.getItem("pdApproval");
+    hcpApproval = localStorage.getItem("hcpApproval");
+    euApproval = localStorage.getItem("euApproval");
+
     if (userType == 'pd') {
-        if (sharedwithEU == "true" && sharedwithHCP == "true") {
+        if (sharedwithEU == "true" && sharedwithHCP == "true" && (euApproval == "true" || hcpApproval == "true")) {
             document.getElementById("approvalButton").style.display = "inline";
             document.getElementById("approvalLabel").style.display = "inline";
         }
@@ -495,7 +508,7 @@ function checkShares() {
         }
     }
     else if (userType == 'hcp') {
-        if (sharedwithEU == "true" && sharedwithPD == "true") {
+        if (sharedwithEU == "true" && sharedwithPD == "true" && (euApproval == "true" || pdApproval == "true")) {
             document.getElementById("approvalButton").style.display = "inline";
             document.getElementById("approvalLabel").style.display = "inline";
         }
@@ -505,7 +518,7 @@ function checkShares() {
         }
     }
     else {
-        if (sharedwithPD == "true" && sharedwithHCP == "true") {
+        if (sharedwithPD == "true" && sharedwithHCP == "true" && (pdApproval == "true" || hcpApproval == "true")) {
             document.getElementById("approvalButton").style.display = "inline";
             document.getElementById("approvalLabel").style.display = "inline";
         }
@@ -536,7 +549,7 @@ function drawNote(note) {
 
 // Function to show user-selected preferences from the previous screen
 function showPrefs() {
-    ctx.clearRect(0, 0, 300, 50);
+    //ctx.clearRect(0, 0, 300, 50);
     //var selectedPlacements = sessionStorage.getItem('placements');
     //var selectedDevices = sessionStorage.getItem('devices');
     //var selectedMechanisms = sessionStorage.getItem('mechanisms');
@@ -554,9 +567,9 @@ function showPrefs() {
 	//console.log("mechanisms: " + mechanismsList);
 
     ctx.font = "10px Arial";
-	ctx.fillText("Preferred Placements: " + placementsList, 10, 30);
-    ctx.fillText("Preferred Devices: " + devicesList, 10, 40);
-    ctx.fillText("Preferred Alerting Mechanisms: " + mechanismsList, 10, 50);
+	ctx.fillText("Preferred Placements: " + placementsList, 320, 10);
+    ctx.fillText("Preferred Devices: " + devicesList, 320, 20);
+    ctx.fillText("Preferred Alerting Mechanisms: " + mechanismsList, 320, 30);
 
 }
 
@@ -695,6 +708,16 @@ function restoreProject() {
     retrievedNotesList = JSON.parse(retrievedNotes);
     //console.log(retrievedNotesList);
 
+    var ischecked1 = localStorage.getItem("checked1");
+    var ischecked2 = localStorage.getItem("checked2");
+
+    console.log("ischecked1: " + ischecked1);
+    console.log("ischecked2: " + ischecked2);
+
+    document.getElementById("shareButton1").checked = ischecked1;
+    document.getElementById("shareButton2").checked = ischecked2;
+
+
     noteslist = retrievedNotesList;
 
     // Draw all the notes that were stored in local storage
@@ -705,49 +728,24 @@ function restoreProject() {
     	//console.log("no notes to draw yet");
 	noteslist = [];
     }
+
+    checkShares();
+
+    checkApproval();
 }
-
-/*
-function hidenotes() {
-    notes = document.getElementById("canvas");
-    //notes = document.getElementById("jscad");
-    notes.style.display = "none";
-
-    document.getElementById("hide").style.display = "none";
-    let showButton = document.getElementById("show");
-    showButton.style.display = "inline";
-}
-
-function shownotes() {
-    notes = document.getElementById("canvas");
-    //notes = document.getElementById("jscad");
-    notes.style.display = "inline";
-
-    document.getElementById("show").style.display = "none";
-    let hideButton = document.getElementById("hide");
-    hideButton.style.display = "inline";
-}
-*/
 
 document.getElementById("canvas").addEventListener("mousedown", handleMouseDown);
 document.getElementById("canvas").addEventListener("mousemove", handleMouseMove);
 document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
 
-
-//document.getElementById("renderTarget").addEventListener("mousedown", handleMouseDown);
-//document.getElementById("renderTarget").addEventListener("mousemove", handleMouseMove);
-//document.getElementById("renderTarget").addEventListener("mouseup", handleMouseUp);
-
 function initialize() {
 
-    //document.getElementById("jscad").style.opacity = "0.5";
-    
     // Progress bar
     var progressBarCanvas = document.createElement("canvas");
     progressBarCanvas.setAttribute("id", "progressCanvas");
     progressBarCanvas.setAttribute("width", "800");
     progressBarCanvas.setAttribute("height", "150");
-    progressBarCanvas.style.position = "absolute";
+    // progressBarCanvas.style.position = "absolute";
     progressBarCanvas.style.left = "25%";
     progressBarCanvas.style.top = "10px";
 
@@ -769,11 +767,12 @@ function initialize() {
 
     var youtubeSearchButton = document.createElement("input");
     youtubeSearchButton.setAttribute("id", "submitted");
+    youtubeSearchButton.className += "button-4";
     youtubeSearchButton.setAttribute("type", "submit");
     youtubeSearchButton.setAttribute("value", "Search Youtube");
-    youtubeSearchButton.setAttribute("width", "100px");
-    youtubeSearchButton.setAttribute("height", "50px");
-    youtubeSearchButton.style.backgroundColor = "#630a00";
+    //youtubeSearchButton.setAttribute("width", "100px");
+    //youtubeSearchButton.setAttribute("height", "50px");
+    //youtubeSearchButton.style.backgroundColor = "#630a00";
 
     youtubeSearchForm.appendChild(youtubeSearchInput);
     youtubeSearchForm.appendChild(youtubeSearchButton);
@@ -781,7 +780,7 @@ function initialize() {
     var youtubeSearchDiv = document.createElement("youtubeSearchDiv");
     youtubeSearchDiv.setAttribute("id", "youtubeSearchDiv");
     youtubeSearchDiv.style.position = "absolute";
-    youtubeSearchDiv.style.right = "150px"; // left 1100
+    youtubeSearchDiv.style.right = "100px"; // left 1100
     youtubeSearchDiv.style.top = "50px";
 
     document.getElementsByTagName("body")[0].appendChild(youtubeSearchDiv);
@@ -792,8 +791,8 @@ function initialize() {
     var notesFormDiv = document.createElement("div");
     notesFormDiv.setAttribute("id", "notesDiv");
     notesFormDiv.style.position = "absolute";
-    notesFormDiv.style.left = "20px";
-    notesFormDiv.style.top = "50px";
+    notesFormDiv.style.right = "100px";
+    notesFormDiv.style.top = "90px";
 
     /*
     var hideNotesButton = document.createElement("button");
@@ -826,17 +825,39 @@ function initialize() {
     noteSubmit.setAttribute("type", "button");
     noteSubmit.setAttribute("value", "Add Note");
     noteSubmit.setAttribute("onclick", "save()");
-    noteSubmit.style.backgroundColor = "#6e6e6e";
-    noteSubmit.style.top = "0px";
+    //noteSubmit.style.backgroundColor = "#6e6e6e";
+    //noteSubmit.style.top = "0px";
+    /*
+    noteSubmit.style.backgroundColor = "#f8f9fa";
+    noteSubmit.style.border = "1px solid #f8f9fa";
+    noteSubmit.style.borderRadius = "4px";
+    noteSubmit.style.color = "#3c4043";
+    noteSubmit.style.cursor = "pointer";
+    noteSubmit.style.fontFamily = "Roboto, arial, sans-serif";
+    noteSubmit.style.fontSize = "14px";
+    noteSubmit.style.height = "30px";
+    noteSubmit.style.lineHeight = "27px";
+    noteSubmit.style.padding = "0 16px";
+    noteSubmit.style.textAlign = "center";
+    */
+    //noteSubmit.style.touch-action = "manipulation";
+
+
+    var prefsDiv = document.createElement("div");
+    prefsDiv.setAttribute("id", "prefsDiv");
+    prefsDiv.style.position = "absolute";
+    prefsDiv.style.right = "100px";
+    prefsDiv.style.top = "130px";
 
     var viewPrefs = document.createElement("input");
     viewPrefs.setAttribute("id", "viewPrefs");
+    viewPrefs.className += "button-4";
     viewPrefs.setAttribute("type", "button");
     viewPrefs.setAttribute("value", "View Preferences");
     viewPrefs.setAttribute("onclick", "showPrefs()");
-    viewPrefs.style.top = "40px";
-    viewPrefs.style.right = "1px";
-    viewPrefs.style.backgroundColor = "#6e6e6e";
+    //viewPrefs.style.top = "40px";
+    //viewPrefs.style.right = "1px";
+    //viewPrefs.style.backgroundColor = "#6e6e6e";
 
     // Only allow the user to go back to the customization tool if they are an enduser
     let userType = sessionStorage.getItem('usertype');
@@ -844,18 +865,19 @@ function initialize() {
         var back = document.createElement("input");
         back.setAttribute("id", "back");
         back.setAttribute("type", "button");
+        back.className += "button-4";
         back.setAttribute("value", "Change my Selections");
-        back.setAttribute("onclick", "window.location.href='updatedcustomization.html'");
-        back.style.right = "1px";
-        back.style.top = "80px";
-        back.style.backgroundColor = "#dbdbdb";
-        youtubeSearchForm.appendChild(back);
+        back.setAttribute("onclick", "window.location.href='../../web/updatedcustomization.html'");
+        //back.style.right = "1px";
+        //back.style.top = "80px";
+        //back.style.backgroundColor = "#dbdbdb";
+        prefsDiv.appendChild(back);
     }
 
     notesForm.appendChild(noteText);
     notesForm.appendChild(noteSubmit);
 
-    youtubeSearchForm.appendChild(viewPrefs);
+    prefsDiv.appendChild(viewPrefs);
 
     notesDiv.appendChild(notesForm);
 
@@ -872,7 +894,7 @@ function initialize() {
     //var repliesCanvas = document.getElementById("jscad");
     repliesCanvas.setAttribute("id", "canvas");
     repliesCanvas.setAttribute("width", "650");
-    repliesCanvas.setAttribute("height", "1000");
+    repliesCanvas.setAttribute("height", "650");
     repliesCanvas.style.position = "absolute";
     repliesCanvas.style.top = "200px";
     repliesCanvas.style.right = "0px";
@@ -881,19 +903,23 @@ function initialize() {
 
     document.getElementsByTagName("body")[0].appendChild(notesFormDiv);
     document.getElementsByTagName("body")[0].appendChild(repliedCanvasDiv);
+    document.getElementsByTagName("body")[0].appendChild(prefsDiv);
+
 
     var modelCanvas = document.getElementById("jscad");
-    modelCanvas.style.position = "absolute";
-    modelCanvas.setAttribute("width", "700");
+    // modelCanvas.style.position = "absolute";
+    //modelCanvas.setAttribute("width", "700");
     modelCanvas.style.top = "170px";
     modelCanvas.style.left = "0px";
+    // modelCanvas.style.width = "30%";
 
     var approvalDiv = document.createElement("div");
     approvalDiv.setAttribute("id", "approvalDiv");
-    approvalDiv.style.position = "absolute";
-    approvalDiv.style.right = "13%";
-    approvalDiv.style.top = "95%";
+    // approvalDiv.style.position = "absolute";
+    approvalDiv.style.right = "130px";
+    approvalDiv.style.bottom = "950px";
     approvalDiv.style.zIndex = "100";
+    approvalDiv.style.position = "fixed";
 
     var approvalForm = document.createElement("form");
     notesForm.setAttribute("id", "approvalForm");
@@ -921,13 +947,17 @@ function initialize() {
 
     var shareDiv = document.createElement("div");
     shareDiv.setAttribute("id", "shareDiv");
-    shareDiv.style.position = "absolute";
-    shareDiv.style.right = "3%";
-    shareDiv.style.top = "90%";
+    // shareDiv.style.position = "absolute";
+    shareDiv.style.right = "10px";
+    shareDiv.style.bottom = "30px";
     shareDiv.style.zIndex = "100";
+    shareDiv.style.position = "fixed";
 
     var shareForm = document.createElement("form");
     shareForm.setAttribute("id", "shareForm");
+    shareForm.style.postion = "absolute";
+    shareForm.style.right = "100px";
+    shareForm.style.top = "150px";
 
     var shareButton1 = document.createElement("input");
     shareButton1.setAttribute("id", "shareButton1");

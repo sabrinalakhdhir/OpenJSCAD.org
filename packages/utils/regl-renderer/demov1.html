@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Demo Application</title>
+  <style>
+    #jscad {
+      width: 15cm;
+      height: 15cm;
+      margin: 0;
+      outline: 1px solid black;
+    }
+  </style>
+  <link src="../../../packages/web/css/demo.css" rel="stylesheet">
+</head>
+<body style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+  <script language="javascript" src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
+  <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
+  <div id="progress"></div>
+  <!-- add a checkbox to toggle between if the loaded file should replace existing models or be added to the existing models -->
+  <div id="importexport" style="margin-left: 40%">
+ <input style="margin-left:15%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
+<br>
+<div style="margin-left: 7%; margin-top: 10px;">
+ <input type="checkbox" id="addtoExistingModel" checked="true" />
+ <label for="replaceModelsCheckbox">Add custom edits to an existing project</label>
+</div>
+ <br>
+ <div style="margin-left: 15%;">
+  <button id="saveButton" onclick="saveToFile()">Save Model</button>
+   
+  <!-- add a button to clear screan -->
+  <button id="clearButton" onclick="clearScreen()">Clear Screen</button>
+  </div>
+</div>
+  
+
+  <div width="50%" id="jscad" style="width: 50%; margin-right: 21%; float: right; margin-top: 40px;"></div>
+  <div width="50%" style="display: inline-block; width: 27%; margin-top: 40px;" id="userinputs"> <!--float: left;-->
+ <!-- Input elements for dimensions and position -->
+  <label for="solidShapeSelect">Select Shape to Create:</label>
+  <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
+    <option value="cuboid">Cube or Rectangle</option>
+    <option value="cylinder">Cylinder</option>
+  </select>
+  <br>
+  <label for="colorPicker">Select Color:</label>
+  <input type="color" id="colorPicker" value="#800080" onchange="updateDimensionsOnScreen()" />
+  <button id="renderButton1" onclick="addCube()" style="float: right;">Add Shape</button>
+  <br>
+  <br>
+  OR
+  <br>
+  <br>
+ 
+  <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
+  <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
+  <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
+  <br>
+  <br>
+  <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+  <br>
+  <hr>
+  <label for="rotationInput"> <b>Position </b></label><br>
+  <label for="xaxisInput">X-Axis:</label>
+  <input type="number" id="xaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <label for="yaxisInput">Y-Axis:</label>
+  <input type="number" id="yaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <label for="zaxisInput">Z-Axis:</label>
+  <input type="number" id="zaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <br><br>
+
+  <label for="positionInput"><b> Dimensions</b></label><br>
+  <label for="heightInput">Width:</label>
+  <input type="number" id="heightInput" value="30" oninput=""/>
+  <label for="widthInput">Length:</label>
+  <input type="number" id="widthInput" value="100" />
+  <label for="lengthInput">Height:</label>
+  <input type="number" id="lengthInput" value="100" oninput="updateDimensionsOnScreen()"/>
+  <label for="radiusInput">Radius:</label>
+  <input type="number" id="radiusInput" value="10" oninput="updateDimensionsOnScreen()"/>
+  <br><br>
+
+  <!-- add textboxes to add rotation to the solid -->
+  <label for="rotationInput"> <b>Rotation</b></label><br>
+  <label for="rotationXaxisInput">X-Axis:</label>
+  <input type="number" id="rotationXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <label for="rotationYaxisInput">Y-Axis:</label>
+  <input type="number" id="rotationYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <label for="rotationZaxisInput">Z-Axis:</label>
+  <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <br>
+  <hr>
+
+  <button style="float:right" onclick="showCavitySelection()">Add Cavity</button>
+  <div id="addCavityDiv" style="display: none;">
+    <label for="cavityShapeSelect">Cavity shape:</label>
+    <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
+      <option value="none">None</option>
+      <option value="cylinder">Cylinder</option>
+      <option value="cuboid">Cube</option>
+    </select>
+</div>
+  <br><br>
+
+  <!-- add textboxes to set the x,y,z axis of the cavity -->
+<div id="cavityDimensions" style="display: none;">
+  <label for="cavityXaxisInput">X-Axis:</label>
+  <input type="number" id="cavityXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <label for="cavityYaxisInput">Y-Axis:</label>
+  <input type="number" id="cavityYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/> 
+  <label for="cavityZaxisInput">Z-Axis:</label>
+  <input type="number" id="cavityZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  <br><br>
+</div>
+
+<div id="cubeCavityOptions" style="display: none;">
+  <label for="cavityHeightInput">Width:</label>
+  <input type="number" id="cavityHeightInput" value="10" oninput="updateDimensionsOnScreen()"/>
+  <label for="cavityWidthInput">Length:</label>
+  <input type="number" id="cavityWidthInput" value="10" oninput="updateDimensionsOnScreen()"/>
+</div>
+
+<div id="cylinderCavityOptions" style="display: none;">
+  <label for="cavityLengthInput">Height:</label>
+  <input type="number" id="cavityLengthInput" value="10" oninput="updateDimensionsOnScreen()"/>
+  <label for="cavityRadiusInput">Radius:</label>
+  <input type="number" id="cavityRadiusInput" value="5" oninput="updateDimensionsOnScreen()"/>
+</div>
+  
+<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button>
+
+</div> 
+
+<script defer src="../../../packages/web/script2.js"></script>
+  <script language="javascript">
+// ********************
+// The design to render.
+// ********************
+const { booleans, colors, primitives, transforms, utils } = jscadModeling // modeling comes from the included MODELING library
+
+const { intersect, subtract, union } = booleans
+const { colorize } = colors
+const { cube, cuboid, line, sphere, cylinder, star, polyhedron } = primitives
+const {translate, rotate} = transforms
+const { degToRad } = utils
+
+var listofsolids = [];
+var listofsolidstorender = [];
+var editFlag = false;
+var cavityFlag = false;
+class solid {
+  constructor(height, width, length, radius, xaxis, yaxis, zaxis, xRotation, yRotation, zRotation, blobb, color, shape) {
+    this.height = height?height:30;
+    this.width = width?width:30;
+    this.length = length?length:30;
+    this.radius = radius?radius:10;
+    this.xaxis = xaxis?xaxis:0;
+    this.yaxis = yaxis?yaxis:0;
+    this.zaxis = zaxis?zaxis:0;
+    this.xRotation = xRotation?xRotation:0;
+    this.yRotation = yRotation?yRotation:0;
+    this.zRotation = zRotation?zRotation:0;
+    this.color = color?color:[0.5,0,0,1]
+    this.blobb = blobb?blobb:null;
+    this.shape = shape;
+  }
+
+  //add a list of getter and setter functions
+    // getheight() {
+    //     return this.height;
+    // }
+    // setheight(value) {
+    //     this.height = value;
+    // }
+    // getwidth() {
+    //     return this.width;
+    // }
+    // setwidth(value) {
+    //     this.width = value;
+    // }
+    // getlength() {
+    //     return this.length;
+    // }
+    // setlength(value) {
+    //     this.length = value;
+    // }
+
+}
+
+class blob {
+  constructor(height, width, length, xaxis, yaxis, zaxis, radius, shape) {
+      this.height = height?height:10;
+      this.width = width?width:10;
+      this.length = length?length:10;
+      this.xaxis = xaxis?xaxis:0;
+      this.yaxis = yaxis?yaxis:0;
+      this.zaxis = zaxis?zaxis:0;
+      this.radius = radius?radius:5;
+      this.shape = shape?shape:'none';
+    }
+    // this.solidNumber = solidNumber?solidNumber:0;
+  
+}
+
+
+
+const addCube = () => {
+
+  //obtain the values from the textboxes for solid
+  const solidShape = document.getElementById("solidShapeSelect").value;
+  const height = Number(document.getElementById("heightInput").value);
+  const width = Number(document.getElementById("widthInput").value);
+  const length = Number(document.getElementById("lengthInput").value);
+  const radius = Number(document.getElementById("radiusInput").value);
+  const xaxis = Number(document.getElementById("xaxisInput").value);
+  const yaxis = Number(document.getElementById("yaxisInput").value);
+  const zaxis = Number(document.getElementById("zaxisInput").value);
+  const xRotation = Number(document.getElementById("rotationXaxisInput").value);
+  const yRotation = Number(document.getElementById("rotationYaxisInput").value);
+  const zRotation = Number(document.getElementById("rotationZaxisInput").value);
+  const colorPicker = document.getElementById("colorPicker");
+  const color = hexToRgbA(colorPicker.value);
+
+  const isblob = document.getElementById("cavityShapeSelect").value == 'none'?false:true;
+  var blobb = null
+  if (isblob){
+    //obtaining values for blobb/cavity from user input
+    const cavityXaxisInput = Number(document.getElementById("cavityXaxisInput").value);
+    const cavityYaxisInput = Number(document.getElementById("cavityYaxisInput").value);
+    const cavityZaxisInput = Number(document.getElementById("cavityZaxisInput").value)?Number(document.getElementById("cavityZaxisInput").value):length/2+zaxis;
+    const cavityHeightInput = Number(document.getElementById("cavityHeightInput").value);
+    const cavityRadiusInput = Number(document.getElementById("cavityRadiusInput").value);
+    const cavityWidthInput = Number(document.getElementById("cavityWidthInput").value);
+    const cavityLengthInput = Number(document.getElementById("cavityLengthInput").value);
+    const cavityShape = document.getElementById("cavityShapeSelect").value;
+
+    console.log('cavity shape is ' + cavityShape)
+    blobb = new blob(cavityHeightInput, cavityWidthInput, cavityLengthInput, cavityXaxisInput, cavityYaxisInput, cavityZaxisInput, cavityRadiusInput, cavityShape);
+    var newSolid
+    var cavity
+    var cavityMade
+
+    //creating the shapes and cavities for rendering
+    console.log('cavity shape is ' + cavityShape)
+    if(cavityShape == 'cylinder') {
+      console.log('cylinder cavity')
+      cavityMade = cylinder({height: blobb.length, radius:blobb.radius});  
+    } else if( cavityShape == 'cuboid'){
+      cavityMade = cuboid({size: [blobb.height,blobb.width,blobb.length]});
+    }
+    cavity = translate([blobb.xaxis,blobb.yaxis,blobb.zaxis],([0, 0.5, 0, 1], cavityMade));
+    document.getElementById("cavityZaxisInput").value = blobb.zaxis;
+  }
+  console.log('radius:', radius)
+  var solidd = new solid(height, width, length, radius, xaxis, yaxis, zaxis, xRotation, yRotation, zRotation, blobb, color, solidShape);
+  
+  // var solidMade
+  // solidd = new solid(height?height:30, width?width:30, length?length:30, radius?radius:10, xaxis?xaxis:0, yaxis?yaxis:0, zaxis?zaxis:0, blobb?blobb:null, color, solidShape);
+  if(solidShape == 'cylinder'){
+    console.log('cylinder is chosen')
+    solidMade = cylinder({ height: solidd.length, radius: solidd.radius });
+  } else if (solidShape == 'cuboid'){
+    solidMade = cuboid({ size: [solidd.height, solidd.width, solidd.length] });
+  }
+  console.log("SOLID:",solidd)
+  newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, isblob?subtract(solidMade,cavity):solidMade)));
+  
+  listofsolidstorender.push(newSolid);
+  listofsolids.push(solidd);
+  console.log(listofsolids);
+  console.log(listofsolidstorender);
+  console.log('jscadGeometry:', jscadGeometry);
+  renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
+  updateDimensionsOnScreen();
+}
+
+const hexToRgbA = (hex) => {
+const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+const rgba = result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+        a: 1 // You can set the alpha value to control transparency
+    }
+    : null;
+return rgba ? [rgba.r / 255, rgba.g / 255, rgba.b / 255, rgba.a] : null;
+}
+
+function rgbToHex(r, g, b) {
+  const clampAndToHex = (number) => {
+    const clamped = Math.max(0, Math.min(1, number));
+    return Math.round(clamped * 255).toString(16).padStart(2, "0");
+  };
+
+  const red = clampAndToHex(r);
+  const green = clampAndToHex(g);
+  const blue = clampAndToHex(b);
+
+  return `#${red}${green}${blue}`;
+}
+
+const updateCube = () => {
+    const solidShape = document.getElementById("solidShapeSelect").value;
+    const solidNumber = Number(document.getElementById("solidNumberInput").value);
+    document.getElementById("solidNumberInput").value = -1;
+
+    const height = Number(document.getElementById("heightInput").value);
+    const width = Number(document.getElementById("widthInput").value);
+    const length = Number(document.getElementById("lengthInput").value);
+    const radius = Number(document.getElementById("radiusInput").value);
+
+    const colorPicker = document.getElementById("colorPicker");
+    const color = hexToRgbA(colorPicker.value);
+
+    const xaxis = Number(document.getElementById("xaxisInput").value);
+    const yaxis = Number(document.getElementById("yaxisInput").value);
+    const zaxis = Number(document.getElementById("zaxisInput").value);
+
+    const xRotation = Number(document.getElementById("rotationXaxisInput").value);
+    const yRotation = Number(document.getElementById("rotationYaxisInput").value);
+    const zRotation = Number(document.getElementById("rotationZaxisInput").value);
+
+    const isblob = document.getElementById("cavityShapeSelect").value == 'none' ?false:true;
+    const cavityShape = document.getElementById("cavityShapeSelect").value;
+
+    const cavityXaxisInput = Number(document.getElementById("cavityXaxisInput").value);
+    const cavityYaxisInput = Number(document.getElementById("cavityYaxisInput").value);
+    const cavityZaxisInput = Number(document.getElementById("cavityZaxisInput").value);
+
+    const cavityHeightInput = Number(document.getElementById("cavityHeightInput").value);
+    const cavityWidthInput = Number(document.getElementById("cavityWidthInput").value);
+    const cavityLengthInput = Number(document.getElementById("cavityLengthInput").value);
+    const cavityRadiusInput = Number(document.getElementById("cavityRadiusInput").value);
+    
+    // console.log('cavity shape in updatecube:',cavityShape)
+    // Validate solidNumber input
+    if (solidNumber >= 0 && solidNumber < listofsolids.length) {
+        listofsolids[solidNumber].height = height;
+        listofsolids[solidNumber].width = width;
+        listofsolids[solidNumber].length = length;
+        listofsolids[solidNumber].radius = radius;
+        listofsolids[solidNumber].shape = solidShape;
+        listofsolids[solidNumber].xaxis = xaxis;
+        listofsolids[solidNumber].yaxis = yaxis;
+        listofsolids[solidNumber].zaxis = zaxis;
+        listofsolids[solidNumber].color = color;
+        listofsolids[solidNumber].xRotation = xRotation;
+        listofsolids[solidNumber].yRotation = yRotation;
+        listofsolids[solidNumber].zRotation = zRotation;
+        
+        if (isblob){
+          if(listofsolids[solidNumber].blobb == null)
+            listofsolids[solidNumber].blobb = new blob(cavityHeightInput, cavityWidthInput, cavityLengthInput, cavityXaxisInput, cavityYaxisInput, cavityZaxisInput,cavityRadiusInput,cavityShape);
+          else {
+            listofsolids[solidNumber].blobb.height = cavityHeightInput;
+            listofsolids[solidNumber].blobb.width = cavityWidthInput;
+            listofsolids[solidNumber].blobb.length = cavityLengthInput;
+            listofsolids[solidNumber].blobb.radius = cavityRadiusInput;
+            listofsolids[solidNumber].blobb.xaxis = cavityXaxisInput;
+            listofsolids[solidNumber].blobb.yaxis = cavityYaxisInput;
+            listofsolids[solidNumber].blobb.zaxis = cavityZaxisInput;
+            listofsolids[solidNumber].blobb.shape = cavityShape;
+
+          }
+          if (cavityShape == 'cylinder'){
+            cavityMade = cylinder({height: cavityLengthInput,radius:cavityRadiusInput});
+          } else if (cavityShape == 'cuboid') {
+            cavityMade = cuboid({size: [cavityHeightInput,cavityWidthInput,cavityLengthInput]});
+          }
+          cavity = translate([cavityXaxisInput,cavityYaxisInput,cavityZaxisInput],cavityMade);
+          if(solidShape == 'cylinder'){
+            console.log('rotations:',xRotation,yRotation,zRotation)
+            newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, subtract(cylinder({ height: length, radius: radius }),cavity)))));
+            listofsolidstorender[solidNumber] = newSolid
+          } else if(solidShape == 'cuboid'){
+            newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, subtract(cuboid({ size: [height, width, length] }),cavity)))));
+            listofsolidstorender[solidNumber] = newSolid
+          }
+        } else {
+          listofsolids[solidNumber].blobb = null;
+          if (solidShape == 'cylinder'){
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cylinder({ height: length, radius: radius })))));
+          } else if (solidShape == 'cuboid') {
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] })))));
+          }
+          // listofsolidstorender[solidNumber] = translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] }))));
+        }
+        // listofsolidstorender[solidNumber] = translate([xaxis,yaxis,zaxis],(colorize([0.5, 0, 0, 0.5], cuboid({ size: [height, width, length] }))));
+        console.log('jscadGeometry:',jscadGeometry)
+        renderDemo({ cubes: listofsolidstorender , solid: jscadGeometry });
+    } else {
+        alert("Invalid cube number!");
+    }
+
+    // Hide all the cavity options so they are not cluttering the screen until a new solid is being added or edited
+    document.getElementById("addCavityDiv").style.display = "none";
+    document.getElementById("cavityDimensions").style.display = "none";
+    document.getElementById("cylinderCavityOptions").style.display = "none";
+    document.getElementById("cubeCavityOptions").style.display = "none";
+
+    // toggleEditMode()
+    updateDimensionsOnScreen();
+}
+
+function showCavitySelection() {
+  document.getElementById("addCavityDiv").style.display = "inline";
+}
+
+const updateDimensionsOnScreen = () => {
+    var selectedShape = document.getElementById("solidShapeSelect").value;
+    
+    if (selectedShape === "cylinder") {
+      // Code to handle cylinder shape
+      document.getElementById("heightInput").disabled = true;
+      document.getElementById("widthInput").disabled = true;
+      document.getElementById("lengthInput").disabled = false;
+      document.getElementById("radiusInput").disabled = false;
+      console.log("Cylinder selected");
+    } else if (selectedShape === "cuboid") {
+      // Code to handle cuboid shape
+      document.getElementById("heightInput").disabled = false;
+      document.getElementById("widthInput").disabled = false;
+      document.getElementById("lengthInput").disabled = false;
+      document.getElementById("radiusInput").disabled = true;
+      console.log("Cuboid selected");
+    } else {
+      document.getElementById("heightInput").disabled = true;
+      document.getElementById("widthInput").disabled = true;
+      document.getElementById("lengthInput").disabled = true;
+      document.getElementById("radiusInput").disabled = true;
+    }
+
+    document.getElementById("cavityShapeSelect").disabled = false;
+    // console.log("document.getElementById('cavityShapeCylinder').value:",document.getElementById("cavityShapeCylinder").checked)
+    if(document.getElementById("cavityShapeSelect").value == 'cylinder'){
+      document.getElementById("cavityDimensions").style.display = "inline";
+      document.getElementById("cylinderCavityOptions").style.display = "inline";
+      document.getElementById("cubeCavityOptions").style.display = "none";
+
+      document.getElementById("cavityHeightInput").disabled = true;
+      document.getElementById("cavityWidthInput").disabled = true;
+      document.getElementById("cavityLengthInput").disabled = false;
+      document.getElementById("cavityRadiusInput").disabled = false;
+      document.getElementById("cavityXaxisInput").disabled = false;
+      document.getElementById("cavityYaxisInput").disabled = false;
+      document.getElementById("cavityZaxisInput").disabled = false;
+    } else if (document.getElementById("cavityShapeSelect").value == 'cuboid'){
+      document.getElementById("cavityDimensions").style.display = "inline";
+      document.getElementById("cubeCavityOptions").style.display = "inline";
+      document.getElementById("cylinderCavityOptions").style.display = "none";
+
+      document.getElementById("cavityHeightInput").disabled = false;
+      document.getElementById("cavityWidthInput").disabled = false;
+      document.getElementById("cavityLengthInput").disabled = false;
+      document.getElementById("cavityRadiusInput").disabled = true;
+      document.getElementById("cavityXaxisInput").disabled = false;
+      document.getElementById("cavityYaxisInput").disabled = false;
+      document.getElementById("cavityZaxisInput").disabled = false;
+    } else if (document.getElementById("cavityShapeSelect").value == 'none'){
+      document.getElementById("cavityHeightInput").disabled = true;
+      document.getElementById("cavityWidthInput").disabled = true;
+      document.getElementById("cavityLengthInput").disabled = true;
+      document.getElementById("cavityRadiusInput").disabled = true;
+      document.getElementById("cavityXaxisInput").disabled = true;
+      document.getElementById("cavityYaxisInput").disabled = true;
+      document.getElementById("cavityZaxisInput").disabled = true;
+    }
+    
+}
+updateDimensionsOnScreen();
+
+const retrieveAndDisplayDimensionsOnScreen = () => {
+    const solidNumber = Number(document.getElementById("solidNumberInput").value);
+    // Validate solidNumber input
+    console.log('listofsolids[solidNumber]:',listofsolids[solidNumber])
+    if (solidNumber >= 0 && solidNumber < listofsolids.length) {
+        //retrieve data from listofsolids
+        var solidShape = listofsolids[solidNumber].shape;
+        const height = listofsolids[solidNumber].height;
+        const width = listofsolids[solidNumber].width;
+        const length = listofsolids[solidNumber].length;
+        const radius = listofsolids[solidNumber].radius;
+        const color = listofsolids[solidNumber].color;
+        const xaxis = listofsolids[solidNumber].xaxis;
+        const yaxis = listofsolids[solidNumber].yaxis;
+        const zaxis = listofsolids[solidNumber].zaxis;
+        const xRotation = listofsolids[solidNumber].xRotation;
+        const yRotation = listofsolids[solidNumber].yRotation;
+        const zRotation = listofsolids[solidNumber].zRotation;
+        const isblob = listofsolids[solidNumber].blobb?listofsolids[solidNumber].blobb.shape == 'none' ?false:true:false;
+        console.log('value of isblob:',listofsolids[solidNumber])
+        //display data on screen
+        document.getElementById("heightInput").value = height;
+        document.getElementById("widthInput").value = width;
+        document.getElementById("lengthInput").value = length;
+        document.getElementById("radiusInput").value = radius;
+        document.getElementById("xaxisInput").value = xaxis;
+        document.getElementById("yaxisInput").value = yaxis;
+        document.getElementById("zaxisInput").value = zaxis;
+        document.getElementById("rotationXaxisInput").value = xRotation;
+        document.getElementById("rotationYaxisInput").value = yRotation;
+        document.getElementById("rotationZaxisInput").value = zRotation;
+        document.getElementById("cavityShapeSelect").value = listofsolids[solidNumber].blobb?listofsolids[solidNumber].blobb.shape:'none';
+        document.getElementById("colorPicker").value = rgbToHex(...color);
+        console.log("COLOR:",color,rgbToHex(...color))
+        document.getElementById("solidShapeSelect").value = solidShape;
+
+        // newSolid = translate([xaxis,yaxis,zaxis],(([0, 0.5, 0, 5], cuboid({ size: [height, width, length] }))));
+        if (isblob){
+          const cavityXaxisInput = listofsolids[solidNumber].blobb.xaxis;
+          const cavityYaxisInput = listofsolids[solidNumber].blobb.yaxis;
+          const cavityZaxisInput = listofsolids[solidNumber].blobb.zaxis;
+          const cavityHeightInput = listofsolids[solidNumber].blobb.height;
+          const cavityRadiusInput = listofsolids[solidNumber].blobb.radius;
+          const cavityWidthInput = listofsolids[solidNumber].blobb.width;
+          const cavityLengthInput = listofsolids[solidNumber].blobb.length;
+          const cavityShape = listofsolids[solidNumber].blobb.shape;
+
+          document.getElementById("cavityXaxisInput").value = cavityXaxisInput;
+          document.getElementById("cavityYaxisInput").value = cavityYaxisInput;
+          document.getElementById("cavityZaxisInput").value = cavityZaxisInput;
+          document.getElementById("cavityHeightInput").value = cavityHeightInput;
+          document.getElementById("cavityWidthInput").value = cavityWidthInput;
+          document.getElementById("cavityLengthInput").value = cavityLengthInput;
+          document.getElementById("cavityRadiusInput").value = cavityRadiusInput;
+          document.getElementById("cavityShapeSelect").value = cavityShape;
+          // console.log("cavityShape:::", cavityShape)
+          if (cavityShape == "cylinder"){
+            cavityMade = cylinder({height: cavityLengthInput, radius:cavityRadiusInput});
+          } else if (cavityShape == "cuboid"){
+            cavityMade = cuboid({size: [cavityHeightInput,cavityWidthInput,cavityLengthInput]});
+          }
+          cavity = translate([cavityXaxisInput,cavityYaxisInput,cavityZaxisInput],cavityMade);
+          var solidMade
+          if(solidShape == 'cylinder'){
+            solidMade = cylinder({ height: length, radius: radius })
+          } else if(solidShape == 'cuboid'){
+            solidMade = cuboid({ size: [height, width, length] });
+          }
+          newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0, 0.5, 0, 0.75], subtract(solidMade,cavity)))));
+          listofsolidstorender[solidNumber] = newSolid
+        } else {
+          document.getElementById("cavityXaxisInput").value = 0;
+          document.getElementById("cavityYaxisInput").value = 0;
+          document.getElementById("cavityZaxisInput").value = 0;
+          document.getElementById("cavityHeightInput").value = 0;
+          document.getElementById("cavityWidthInput").value = 0;
+          document.getElementById("cavityLengthInput").value = 0;
+          document.getElementById("cavityShapeSelect").value = 'none';
+
+          if(solidShape == 'cylinder'){
+            solidMade = cylinder({ height: length, radius: radius })
+          } else if(solidShape == 'cuboid'){
+            solidMade = cuboid({ size: [height, width, length] });
+          }
+          newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0,0.5,0,0.75], solidMade))));
+          listofsolidstorender[solidNumber] = newSolid
+        }
+        console.log('solidstorender while editing',listofsolidstorender)
+        //parse listofsolidstorender and change color of all solid except the one to be edited
+        for(i=0;i<listofsolidstorender.length;i++){
+            if(i!=solidNumber){
+              console.log("listofsolidstorender.length:",listofsolidstorender.length)
+              console.log('listofsolids.length',listofsolids.length)
+              console.log("*****listofsolids:",listofsolids[i], i)
+                  // console.log('color:',listofsolids[i].color?listofsolids[i].color:[0,0.5,0.5,1])
+                  listofsolids[i]?listofsolidstorender[i] = (colorize((listofsolids[i].color?listofsolids[i].color:[0,0.5,0.5,1]),listofsolidstorender[i])):null
+            }
+        }
+        
+    } else {
+      alert("Solid number is not valid");
+      document.getElementById("solidNumberInput").value = 0;
+      for(i=0;i<listofsolidstorender.length;i++){
+            listofsolids[i]?listofsolidstorender[i] = (colorize((listofsolids[i].color?listofsolids[i].color:[0,0.5,0.5,1]),listofsolidstorender[i])):null
+        }
+    }
+    renderDemo({ cubes: listofsolidstorender, solid: jscadGeometry});
+    updateDimensionsOnScreen();
+
+}
+
+const deletesolid = () => {
+  index = document.getElementById("solidNumberInput").value;
+  document.getElementById("solidNumberInput").value = 0;
+    if (index >= 0 && index < listofsolids.length) {
+        listofsolids.splice(index, 1);
+        listofsolidstorender.splice(index, 1);
+        renderDemo({ cubes: listofsolidstorender, solid: jscadGeometry });
+    }
+
+};
+
+const clearScreen = () => {
+  listofsolids = [];
+  listofsolidstorender = [];
+  jscadGeometry = [];
+  renderDemo({ cubes: listofsolidstorender, solid: jscadGeometry});
+}
+// Function to save the rendered model to a file
+const saveToFile = () => {
+    // Save STL Content as STL File
+    //check if stlContent is empty
+    if (!(stlContent == "" || stlContent == undefined || stlContent == [])){
+      const stlBlob = new Blob([stlContent], { type: "application/octet-stream" });
+      const stlLink = document.createElement("a");
+      stlLink.href = URL.createObjectURL(stlBlob);
+      stlLink.download = "model.stl";
+      stlLink.click();
+    }
+
+    // Save listofsolids as JSON File
+    if (!(listofsolids == "" || listofsolids == undefined || listofsolids == [])){
+    const jsonBlob = new Blob([JSON.stringify(listofsolids)], { type: "application/json" });
+    const jsonLink = document.createElement("a");
+    jsonLink.href = URL.createObjectURL(jsonBlob);
+    jsonLink.download = "model.json";
+    jsonLink.click();
+
+    console.log('saved to files');
+    }
+};
+
+
+const convertSTLToGeometry = (stlData) => {
+    const dataView = new DataView(stlData);
+
+    // Read the STL header (80 bytes) - this can be skipped if not needed
+    const header = new TextDecoder().decode(new Uint8Array(stlData.slice(0, 80)));
+
+    // Get the number of triangles (faces) in the STL
+    const numTriangles = dataView.getUint32(80, true);
+
+    // Initialize arrays to store vertex data
+    const vertices = [];
+    const vertexIndices = []; // To store vertex indices for each face
+
+    // Iterate over each triangle to extract vertex and normal data
+    let byteOffset = 84; // Start after header and triangle count
+    for (let i = 0; i < numTriangles; i++) {
+        const normal = [
+            dataView.getFloat32(byteOffset, true),
+            dataView.getFloat32(byteOffset + 4, true),
+            dataView.getFloat32(byteOffset + 8, true)
+        ];
+
+        byteOffset += 12; // Move to next normal
+
+        const faceVertices = [];
+        for (let j = 0; j < 3; j++) {
+            const vertex = [
+                dataView.getFloat32(byteOffset, true),
+                dataView.getFloat32(byteOffset + 4, true),
+                dataView.getFloat32(byteOffset + 8, true)
+            ];
+            vertices.push(vertex);
+            faceVertices.push(vertices.length - 1); // Store vertex index
+            byteOffset += 12; // Move to next vertex
+        }
+
+        vertexIndices.push(faceVertices); // Store face vertex indices
+        byteOffset += 2; // Skip attribute byte count
+    }
+
+    // Create JSCAD geometry
+    const jscadGeometry = polyhedron({ points: vertices, faces: vertexIndices });
+
+    return jscadGeometry;
+};
+
+var jscadGeometry;
+var stlContent;
+// Function to load a model from a file
+const loadFromFile = (event) => {
+     listofsolidstorender = [];
+    //  jscadGeometry = []
+    const addtoExistingModel = document.getElementById("addtoExistingModel").checked;
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    
+    if (file.name.toLowerCase().endsWith('.stl')){
+      reader.onload = (stlEvent) => {
+            stlContent = stlEvent.target.result;
+            // Process the STL content as needed and render with jscadReglRenderer
+            // Call the rendering function here using stlContent
+            console.log("stlContent", stlContent)
+            jscadGeometry = convertSTLToGeometry(stlContent);
+            // replaceModels? renderDemo({ cubes: [], solid: [jscadGeometry] }): renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
+            renderDemo({ solid: [jscadGeometry] })
+          };
+        reader.readAsArrayBuffer(file);
+    } else{
+      reader.onload = (event) => {
+        const loadedModel = JSON.parse(event.target.result);
+        console.log("loadedModel", loadedModel)
+        listofsolids = loadedModel;
+        mostrecentlistofsolids = listofsolidstorender;
+        listofsolidstorender = loadedModel.map(cube => {
+          if(cube.blobb){
+            var blobb;
+            if(cube.blobb.shape == "cylinder") {
+              blobb = translate([cube.blobb.xaxis,cube.blobb.yaxis,cube.blobb.zaxis],cylinder({height: cube.blobb.length, radius:cube.blobb.radius}));
+            }
+            else if (cube.blobb.shape == "cuboid") {
+              blobb = translate([cube.blobb.xaxis,cube.blobb.yaxis,cube.blobb.zaxis],cuboid({size: [cube.blobb.height,cube.blobb.width,cube.blobb.length]}));
+            }
+            return newSolid = rotate([cube.xRotation, yRotation, zRotation],translate([cube.xaxis,cube.yaxis,cube.zaxis],colorize(cube.color, subtract(cuboid({ size: [cube.height, cube.width, cube.length] }),blobb))));
+          } 
+          else
+            return rotate([cube.xRotation, cube.yRotation, cube.zRotation],translate([cube.xaxis, cube.yaxis, cube.zaxis], colorize(cube.color, cuboid({ size: [cube.height, cube.width, cube.length] }))));
+        });
+        console.log("listofsolidstorender", listofsolidstorender)
+        console.log("mostrecentlistofsolids", mostrecentlistofsolids)
+        console.log('combined:', listofsolidstorender.push(mostrecentlistofsolids))
+        addtoExistingModel? renderDemo({ solid: jscadGeometry, cubes: listofsolidstorender }) : renderDemo({ cubes: listofsolidstorender })
+        // renderDemo({ solid: jscadGeometry, cubes: listofsolidstorender })
+    };
+    reader.readAsText(file);
+}
+    
+};
+
+
+// const getCubesforRendering = (parameters) => {
+//     if(parameters.cubes){
+//         for(i=0;i<parameters.cubes.length;i++){
+//         const cubee = colorize([0.5, 0, 0, 0.65], cuboid({ size: [parameters.cubes[i].height, parameters.cubes[i].width, parameters.cubes[i].length] }));
+//         listofsolidstorender.push(cubee);
+//     }
+//     }
+//     return listofsolidstorender;
+// }
+
+  </script>
+
+  <script language="javascript">
+// ********************
+// Renderer configuration and initiation.
+// ********************
+const { prepareRender, drawCommands, cameras, controls, entitiesFromSolids } = jscadReglRenderer
+
+const perspectiveCamera = cameras.perspective
+const orbitControls = controls.orbit
+
+const containerElement = document.getElementById("jscad")
+
+const width = containerElement.clientWidth
+const height = containerElement.clientHeight
+
+const state = {}
+
+// prepare the camera
+state.camera = Object.assign({}, perspectiveCamera.defaults)
+perspectiveCamera.setProjection(state.camera, state.camera, { width, height })
+perspectiveCamera.update(state.camera, state.camera)
+
+// prepare the controls
+state.controls = orbitControls.defaults
+
+// prepare the renderer
+const setupOptions = {
+  glOptions: { container: containerElement },
+}
+const renderer = prepareRender(setupOptions)
+
+const gridOptions = {
+  visuals: {
+    drawCmd: 'drawGrid',
+    show: true
+  },
+  size: [500, 500],
+  ticks: [25, 5],
+  // color: [0, 0, 1, 1],
+  // subColor: [0, 0, 1, 0.5]
+}
+
+const axisOptions = {
+  visuals: {
+    drawCmd: 'drawAxis',
+    show: true
+  },
+  size: 300,
+  // alwaysVisible: false,
+  // xColor: [0, 0, 1, 1],
+  // yColor: [1, 0, 1, 1],
+  // zColor: [0, 0, 0, 1]
+}
+
+const entities = entitiesFromSolids({}, listofsolids)
+
+// assemble the options for rendering
+const renderOptions = {
+  camera: state.camera,
+  drawCommands: {
+    drawAxis: drawCommands.drawAxis,
+    drawGrid: drawCommands.drawGrid,
+    drawLines: drawCommands.drawLines,
+    drawMesh: drawCommands.drawMesh
+  },
+  // define the visual content
+  entities: [
+    gridOptions,
+    axisOptions,
+    ...entities
+  ]
+}
+
+// the heart of rendering, as themes, controls, etc change
+let updateView = true
+
+const doRotatePanZoom = () => {
+
+  if (rotateDelta[0] || rotateDelta[1]) {
+    const updated = orbitControls.rotate({ controls: state.controls, camera: state.camera, speed: rotateSpeed }, rotateDelta)
+    state.controls = { ...state.controls, ...updated.controls }
+    updateView = true
+    rotateDelta = [0, 0]
+  }
+
+  if (panDelta[0] || panDelta[1]) {
+    const updated = orbitControls.pan({ controls:state.controls, camera:state.camera, speed: panSpeed }, panDelta)
+    state.controls = { ...state.controls, ...updated.controls }
+    panDelta = [0, 0]
+    state.camera.position = updated.camera.position
+    state.camera.target = updated.camera.target
+    updateView = true
+  }
+
+  if (zoomDelta) {
+    const updated = orbitControls.zoom({ controls:state.controls, camera:state.camera, speed: zoomSpeed }, zoomDelta)
+    state.controls = { ...state.controls, ...updated.controls }
+    zoomDelta = 0
+    updateView = true
+  }
+}
+
+const updateAndRender = (timestamp) => {
+  doRotatePanZoom()
+
+  if (updateView) {
+    const updates = orbitControls.update({ controls: state.controls, camera: state.camera })
+    state.controls = { ...state.controls, ...updates.controls }
+    updateView = state.controls.changed // for elasticity in rotate / zoom
+
+    state.camera.position = updates.camera.position
+    perspectiveCamera.update(state.camera)
+
+    renderer(renderOptions)
+  }
+  window.requestAnimationFrame(updateAndRender)
+}
+window.requestAnimationFrame(updateAndRender)
+
+// convert HTML events (mouse movement) to viewer changes
+let lastXX = 0
+let lastYY = 0
+
+const rotateSpeed = 0.002
+const panSpeed = 1
+const zoomSpeed = 0.08
+let rotateDelta = [0, 0]
+let panDelta = [0, 0]
+let zoomDelta = 0
+let pointerDown = false
+
+const moveHandler = (ev) => {
+  if(!pointerDown) return
+  const dx = lastXX - ev.pageX 
+  const dy = ev.pageY - lastYY 
+
+  const shiftKey = (ev.shiftKey === true) || (ev.touches && ev.touches.length > 2)
+  if (shiftKey) {
+    panDelta[0] += dx
+    panDelta[1] += dy
+  } else {
+    rotateDelta[0] -= dx
+    rotateDelta[1] -= dy
+  }
+
+  lastXX = ev.pageX
+  lastYY = ev.pageY
+
+  ev.preventDefault()
+}
+const downHandler = (ev) => {
+  pointerDown = true
+  lastXX = ev.pageX
+  lastYY = ev.pageY
+  containerElement.setPointerCapture(ev.pointerId)
+}
+
+const upHandler = (ev) => {
+  pointerDown = false
+  containerElement.releasePointerCapture(ev.pointerId)
+}
+
+const wheelHandler = (ev) => {
+  zoomDelta += ev.deltaY
+  ev.preventDefault()
+}
+
+containerElement.onpointermove = moveHandler
+containerElement.onpointerdown = downHandler
+containerElement.onpointerup = upHandler
+containerElement.onwheel = wheelHandler
+
+// Helper function to display the dimensions
+const displayDimensions = (dimensions) => {
+      const dimensionsDiv = document.getElementById("dimensions");
+      dimensionsDiv.textContent = `Width: ${dimensions[0]} Height: ${dimensions[1]} Depth: ${dimensions[2]}`;
+    };
+
+    // Attach a click event listener to the container element to handle model clicks
+    containerElement.addEventListener("click", (event) => {
+      const pickResult = renderer.pickEntity(event.clientX, event.clientY);
+      if (pickResult && pickResult.entity) {
+        const dimensions = pickResult.entity.size;
+        displayDimensions(dimensions);
+      }
+    });
+
+
+const renderDemo = (parameters) => {
+    // console.log('renderDemo', parameters)
+    // console.log(listofsolids)
+    // console.log(listofsolidstorender)
+    console.log(parameters)
+    // parameters.solid?parameters.cubes.push(parameters.solid):null
+    var solidstorender = [] 
+    solidstorender.push(parameters.cubes?parameters.cubes:null)
+    solidstorender.push(parameters.solid?parameters.solid:null)
+    const entities = entitiesFromSolids({}, solidstorender?solidstorender:listofsolidstorender);
+      // const entities = entitiesFromSolids({}, parameters.cubes?parameters.cubes:listofsolidstorender);
+
+      renderOptions.entities = [
+        gridOptions,
+        axisOptions,
+        ...entities
+      ];
+
+      renderer(renderOptions);
+    };
+
+    // Call the renderDemo function initially with the default parameters
+    renderDemo({ listofsolidstorender });
+  </script>
+  
+  <div id="dimensions"></div>
+</body>
+</html>

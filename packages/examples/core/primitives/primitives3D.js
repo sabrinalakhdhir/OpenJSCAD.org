@@ -9,27 +9,57 @@
  */
 
 const jscad = require('@jscad/modeling')
-const { cube, cuboid, cylinder, cylinderElliptic, ellipsoid, geodesicSphere, roundedCuboid, roundedCylinder, sphere, torus } = jscad.primitives
-const { translate } = jscad.transforms
+const { cylinder, torus } = jscad.primitives
+const { translate, rotateX } = jscad.transforms
+const { union } = jscad.booleans
+const { colorize, hexToRgb } = jscad.colors
 
-const main = () => {
-  const allPrimitives = [
-    cube(),
-    cuboid({ size: [1, 2, 3] }),
-    roundedCuboid({ size: [2, 3, 2], roundRadius: 0.4, segments: 32 }),
-    roundedCuboid({ size: [1, 2, 3], roundRadius: 0.4, segments: 16 }),
-    sphere({ radius: 2, segments: 16 }),
-    geodesicSphere({ radius: 1.5, segments: 16 }),
-    ellipsoid({ radius: [2, 1, 1.5], segments: 64, axes: [[1, 1, 0], [0, -1, 1], [-1, 0, 1]] }),
-    cylinder({ radius: 1, height: 5 }),
-    roundedCylinder({ radius: 1, height: 8, roundRadius: 0.8 }),
-    cylinderElliptic({ height: 8, startRadius: [1, 2], startAngle: 0, endRadius: [1, 2], endAngle: (Math.PI / 8), segments: 32 }),
-    cylinder({ start: [0, 0, 0], end: [3, 3, 10], radius: 1 }),
-    torus({ innerRadius: 1, outerRadius: 1.2 }),
-    torus({ innerRadius: 1, outerRadius: 1.5, innerSegments: 4, outerSegments: 6, innerRotation: 0 })
-  ]
-
-  return allPrimitives.map((primitive, index) => translate([(index % 4 - 2) * 6, Math.floor(index / 4 - 2) * 6, 0], primitive))
+const options = {
+  ringOuterRadius: 20,
+  ringInnerRadius: 3,
+  ringHeight: 5,
+  jewelHeight: 30,
+  jewelRadius: 8,
+  strapColor: [0, 0, 0], // Default strap color is blue
+  dialColor: [0, 0, 255], // Default dial color is white
 }
 
-module.exports = { main }
+const getParameterDefinitions = () => [
+  { name: 'ringOuterRadius', type: 'float', initial: options.ringOuterRadius, caption: 'Ring Radius' },
+  { name: 'ringInnerRadius', type: 'float', initial: options.ringInnerRadius, caption: 'Ring Thickness' },
+  { name: 'ringHeight', type: 'float', initial: options.ringHeight, caption: 'Jewel Position' },
+  { name: 'jewelHeight', type: 'float', initial: options.jewelHeight, caption: 'Jewel Height' },
+  { name: 'jewelRadius', type: 'float', initial: options.jewelRadius, caption: 'Jewel Radius' },
+  { name: 'strapColor', type: 'color', initial: '#0000FF', caption: 'Strap Color' },
+  { name: 'dialColor', type: 'color', initial: '#006464', caption: 'Dial Color' },
+]
+
+const initializeOptions = (params) => {
+  options.strapColor = hexToRgb(params.strapColor)
+  options.dialColor = hexToRgb(params.dialColor)
+  options.ringOuterRadius = params.ringOuterRadius
+  options.ringInnerRadius = params.ringInnerRadius
+  options.ringHeight = params.ringHeight
+  options.jewelHeight = params.jewelHeight
+  options.jewelRadius = params.jewelRadius
+}
+
+const main = (params) => {
+  initializeOptions(params)
+
+   //const jewel = colorize([0,255,0],translate([0, 0, options.ringHeight / 2 + options.jewelHeight / 2], cylinder({ height: options.jewelHeight, radius: options.jewelRadius })))
+ // const ring = colorize([255,0,0],rotateX(Math.PI / 2, torus({ outerRadius: options.ringOuterRadius, innerRadius: options.ringInnerRadius, height: options.ringHeight })))
+
+  //const solid = union(colorize([0,0,255],ring), colorize([255,0,0],jewel))
+
+  const jewel = cylinder({ height: options.jewelHeight, radius: options.jewelRadius })
+  const ring = torus({ outerRadius: options.ringOuterRadius, innerRadius: options.ringInnerRadius, height: options.ringHeight })
+  
+   const solid = [
+     translate([0,0,options.ringHeight / 2 + options.jewelHeight / 2],colorize(options.strapColor,jewel)),
+     rotateX(Math.PI / 2,colorize(options.dialColor,ring))
+   ]
+  return solid
+}
+
+module.exports = { main, getParameterDefinitions }

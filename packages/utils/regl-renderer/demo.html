@@ -1,33 +1,64 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html>
 <head>
   <title>Demo Application</title>
-    <style>
-      #jscad{
-        width: 15cm;
-        height: 15cm;
-        margin: 0;
-        outline: 1px solid black;
-      }
-    </style>
+  <style>
+    #jscad {
+      width: 15cm;
+      height: 15cm;
+      margin: 0;
+      outline: 1px solid black;
+    }
+  </style>
 </head>
 <body>
   <script language="javascript" src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
   <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
 
   <div id="jscad"></div>
+  <button id="renderButton1" onclick="renderDemo({ scale: 1, ringHeight:30 })">Cube</button>
+  <button id="renderButton2" onclick="renderDemo({ scale: 2 })">Sphere</button>
+ <!-- Input elements for ring and jewel height -->
+ <label for="ringHeightInput">Ring Height:</label>
+ <input type="number" id="ringHeightInput" value="30" onchange="updateHeight()" />
+
+ <label for="jewelHeightInput">Jewel Height:</label>
+ <input type="number" id="jewelHeightInput" value="100" onchange="updateHeight()" />
 
   <script language="javascript">
 // ********************
 // The design to render.
 // ********************
-const { booleans, colors, primitives } = jscadModeling // modeling comes from the included MODELING library
+const { booleans, colors, primitives, transforms } = jscadModeling // modeling comes from the included MODELING library
 
 const { intersect, subtract } = booleans
 const { colorize } = colors
 const { cube, cuboid, line, sphere, star } = primitives
+const {translate} = transforms
+var w = new Array();
+var scale=-1;
+
+const options = {
+  ringHeight: 350,
+  jewelHeight: 100,
+}
+
+const getParameterDefinitions = (params) => [
+  { name: 'ringHeight', type: 'float', initial: options.ringHeight, caption: 'Jewel Position (in mm)' },
+  { name: 'jewelHeight', type: 'float', initial: options.jewelHeight, caption: 'Jewel Height (in mm)' },
+]
+const initializeOptions = (params) => {
+  options.ringHeight = params.ringHeight
+  options.jewelHeight = params.jewelHeight
+}
 
 const demo = (parameters) => {
+
+  initializeOptions(parameters)
+
+  console.log('demo', parameters)
+  scale += 1
+  console.log('scale', scale)
   const logo = [
     colorize([1.0, 0.4, 1.0], subtract(
       cube({ size: 300 }),
@@ -38,8 +69,8 @@ const demo = (parameters) => {
       cube({ size: 210 })
     ))
   ]
-
-  const transpCube = colorize([1, 0, 0, 0.75], cuboid({ size: [100 * parameters.scale, 100, 210 + (200 * parameters.scale)] }))
+  const cubee = colorize([0.5, 0, 0, 0.65], cuboid({ size: [parameters.ringHeight, 100, 100] }))
+  const transpCube = colorize([scale, 0.8, 0, 0.75], cuboid({ size: [100 * parameters.scale, 100, 210 + (200 * scale)] }))
   const star2D = star({ vertices: 8, innerRadius: 300, outerRadius: 400 })
   const line2D = colorize([1.0, 0, 0], line([[260, 260], [-260, 260], [-260, -260], [260, -260], [260, 260]]))
   // some colors are intentionally without alpfa channel to test geom2ToGeometries will add alpha channel
@@ -53,8 +84,11 @@ const demo = (parameters) => {
   star2D.sides.forEach((side, i) => {
     if (i >= 2) side.color = colorChange[i % colorChange.length]
   })
-
-  return [transpCube, star2D, line2D, ...logo]
+  for (i=0; i<scale; i++){
+    parameters.scale == 1 ? w.push(translate([scale*5,scale*6,scale*10],cubee)) : w.push(translate([scale*5,scale*6,scale*10],transpCube))
+  }
+  
+  return [w]
 }
   </script>
 
@@ -111,7 +145,7 @@ const axisOptions = {
   // zColor: [0, 0, 0, 1]
 }
 
-const entities = entitiesFromSolids({}, demo({ scale: 1 }))
+const entities = entitiesFromSolids({}, demo({ scale: 1,ringHeight:30, jewelHeight: 100 }))
 
 // assemble the options for rendering
 const renderOptions = {
@@ -229,6 +263,37 @@ containerElement.onpointerdown = downHandler
 containerElement.onpointerup = upHandler
 containerElement.onwheel = wheelHandler
 
+// Helper function to display the dimensions
+const displayDimensions = (dimensions) => {
+      const dimensionsDiv = document.getElementById("dimensions");
+      dimensionsDiv.textContent = `Width: ${dimensions[0]} Height: ${dimensions[1]} Depth: ${dimensions[2]}`;
+    };
+
+    // Attach a click event listener to the container element to handle model clicks
+    containerElement.addEventListener("click", (event) => {
+      const pickResult = renderer.pickEntity(event.clientX, event.clientY);
+      if (pickResult && pickResult.entity) {
+        const dimensions = pickResult.entity.size;
+        displayDimensions(dimensions);
+      }
+    });
+
+
+const renderDemo = (parameters) => {
+      const entities = entitiesFromSolids({}, demo(parameters));
+
+      renderOptions.entities = [
+        gridOptions,
+        axisOptions,
+        ...entities
+      ];
+
+      renderer(renderOptions);
+    };
+
+    // Call the renderDemo function initially with the default parameters
+    renderDemo({ scale: 1, ringHeight:30, jewelHeight: 100 });
   </script>
+  <div id="dimensions"></div>
 </body>
 </html>

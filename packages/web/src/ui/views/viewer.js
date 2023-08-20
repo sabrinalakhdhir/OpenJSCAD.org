@@ -127,7 +127,9 @@ const viewer = (state, i18n) => {
 
       if (updateView) {
         const updated = orbitControls.update({ controls, camera })
+        // console.log(controls,'\n', updated.controls)
         controls = { ...controls, ...updated.controls }
+        
         updateView = controls.changed // for elasticity in rotate / zoom
 
         camera.position = updated.camera.position

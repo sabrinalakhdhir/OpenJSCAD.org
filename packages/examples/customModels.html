@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Import JS on Button Click</title>
+</head>
+<body>
+    <h1>Click the button to import JavaScript contents</h1>
+    
+    <button id="importButton">Import JavaScript</button>
+    
+    <script>
+        // Function to dynamically import the JS file
+        function importJS() {
+            const script = document.createElement('script');
+            script.src = './ringsaved.js'; // Relative URL to the JS file
+            document.body.appendChild(script);
+        }
+
+        // Event listener to import JS on button click
+        document.getElementById('importButton').addEventListener('click', importJS);
+    </script>
+</body>
+</html>

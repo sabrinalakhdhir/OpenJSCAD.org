@@ -31,7 +31,8 @@
   "auto reload": "Enable Auto-reload",
   "auto zoom": "Enable Auto-zoom",
   "export":"Export",
-  "load project":"Load a JSCAD project",
+  "load project":"Upload a JSCAD project",
+  "load predefined project":"Load a predefined JSCAD project",
 
   "AMF (experimental)":"AMF",
   "DXF (ASCII)":"DXF (ascii)",

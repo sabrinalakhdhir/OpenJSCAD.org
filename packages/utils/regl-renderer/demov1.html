@@ -46,20 +46,21 @@
   <label for="colorPicker">Select Color:</label>
   <input type="color" id="colorPicker" value="#800080" onchange="updateDimensionsOnScreen()" />
   <button id="renderButton1" onclick="addCube()" style="float: right;">Add Shape</button>
-  <br>
-  <br>
-  OR
+
   <br>
   <br>
  
-  <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
-  <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
-  <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
-  <br>
-  <br>
-  <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+  <div id="edit" style="display: none;">
+    <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
+    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
+    <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
+    <br>
+    <br>
+    <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+  </div>
   <br>
   <hr>
+  <div id="positionDetails" style="display: none;">
   <label for="rotationInput"> <b>Position </b></label><br>
   <label for="xaxisInput">X-Axis:</label>
   <input type="number" id="xaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
@@ -68,18 +69,28 @@
   <label for="zaxisInput">Z-Axis:</label>
   <input type="number" id="zaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <br><br>
+</div>
 
+<div id="dimensionDetails" style="display: none;">
   <label for="positionInput"><b> Dimensions</b></label><br>
+<div id="lengthwidthDimension" style="display: none;">
   <label for="heightInput">Width:</label>
-  <input type="number" id="heightInput" value="30" oninput=""/>
+  <input type="number" id="heightInput" value="30" oninput="updateDimensionsOnScreen()"/>
   <label for="widthInput">Length:</label>
-  <input type="number" id="widthInput" value="100" />
+  <input type="number" id="widthInput" value="100" oninput="updateDimensionsOnScreen()"/>
+</div>
+<div id="heightDimension" style="display: none;">
   <label for="lengthInput">Height:</label>
   <input type="number" id="lengthInput" value="100" oninput="updateDimensionsOnScreen()"/>
+</div>
+<div id="radiusDimension" style="display: none;">
   <label for="radiusInput">Radius:</label>
   <input type="number" id="radiusInput" value="10" oninput="updateDimensionsOnScreen()"/>
+</div>
   <br><br>
+</div>
 
+<div id="rotationDetails" style="display: none;">
   <!-- add textboxes to add rotation to the solid -->
   <label for="rotationInput"> <b>Rotation</b></label><br>
   <label for="rotationXaxisInput">X-Axis:</label>
@@ -90,6 +101,7 @@
   <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <br>
   <hr>
+</div>
 
   <button style="float:right" onclick="showCavitySelection()">Add Cavity</button>
   <div id="addCavityDiv" style="display: none;">
@@ -126,7 +138,7 @@
   <label for="cavityRadiusInput">Radius:</label>
   <input type="number" id="cavityRadiusInput" value="5" oninput="updateDimensionsOnScreen()"/>
 </div>
-  
+  <br> 
 <button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button>
 
 </div> 
@@ -221,6 +233,21 @@ const addCube = () => {
   const colorPicker = document.getElementById("colorPicker");
   const color = hexToRgbA(colorPicker.value);
 
+  if (solidShape == "cuboid") {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+  else {
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+
+  document.getElementById("positionDetails").style.display = "inline";
+  document.getElementById("dimensionDetails").style.display = "inline";
+  document.getElementById("rotationDetails").style.display = "inline";
+
   const isblob = document.getElementById("cavityShapeSelect").value == 'none'?false:true;
   var blobb = null
   if (isblob){
@@ -272,6 +299,10 @@ const addCube = () => {
   console.log('jscadGeometry:', jscadGeometry);
   renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
   updateDimensionsOnScreen();
+
+  if (listofsolids.length >= 1) {
+    document.getElementById("edit").style.display = 'inline';
+  }
 }
 
 const hexToRgbA = (hex) => {

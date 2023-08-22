@@ -607,7 +607,7 @@ function handleMouseDown(e) {
             input.type = "text";
             input.style.position = "absolute";
             input.style.zIndex = "1";
-            input.style.left = noteslist[i].right + 1120 + "px";
+            input.style.left = noteslist[i].right + 908 + "px";
             input.style.top = noteslist[i].y + 277 + "px";
             input.style.width = "90px";
             input.style.height = "15px";
@@ -619,7 +619,7 @@ function handleMouseDown(e) {
             button.innerHTML = "Reply";
             button.style.position = "absolute";
             button.style.zIndex = "1";
-            button.style.left = noteslist[i].right + 1215 + "px";
+            button.style.left = noteslist[i].right + 1008 + "px";
             button.style.top = noteslist[i].y + 277 + "px";
             button.style.width = "40px";
             button.style.height = "20px";

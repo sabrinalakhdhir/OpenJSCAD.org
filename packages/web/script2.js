@@ -793,7 +793,7 @@ function initialize() {
     notesFormDiv.setAttribute("id", "notesDiv");
     notesFormDiv.style.position = "absolute";
     notesFormDiv.style.right = "100px";
-    notesFormDiv.style.top = "90px";
+    notesFormDiv.style.top = "80px";
 
     /*
     var hideNotesButton = document.createElement("button");
@@ -848,7 +848,8 @@ function initialize() {
     prefsDiv.setAttribute("id", "prefsDiv");
     prefsDiv.style.position = "absolute";
     prefsDiv.style.right = "100px";
-    prefsDiv.style.top = "130px";
+    prefsDiv.style.top = "110px";
+    prefsDiv.style.width = "130px";
 
     var viewPrefs = document.createElement("input");
     viewPrefs.setAttribute("id", "viewPrefs");
@@ -856,7 +857,7 @@ function initialize() {
     viewPrefs.setAttribute("type", "button");
     viewPrefs.setAttribute("value", "View Preferences");
     viewPrefs.setAttribute("onclick", "showPrefs()");
-    //viewPrefs.style.top = "40px";
+    viewPrefs.style.float = "right";
     //viewPrefs.style.right = "1px";
     //viewPrefs.style.backgroundColor = "#6e6e6e";
 
@@ -869,7 +870,7 @@ function initialize() {
         //back.className += "button-4";
         back.setAttribute("value", "Change my Selections");
         back.setAttribute("onclick", "window.location.href='../../web/updatedcustomization.html'");
-        //back.style.right = "1px";
+        back.style.right = "150px";
         //back.style.top = "80px";
         //back.style.backgroundColor = "#dbdbdb";
         prefsDiv.appendChild(back);

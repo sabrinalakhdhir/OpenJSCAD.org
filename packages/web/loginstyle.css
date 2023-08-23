@@ -69,7 +69,7 @@ html {
     padding: 0px 0px 5px 5px;
   }
   
-  #login-form-submit, #saveButton, #submitted, #savenotebutton {
+  #login-form-submit/*, #saveButton, #submitted, #savenotebutton*/ {
     width: 100%;
     padding: 7px;
     border: none;

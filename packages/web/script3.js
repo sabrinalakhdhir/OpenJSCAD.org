@@ -336,7 +336,7 @@ function drawAllNotes() {
             for (let i = 0; i < replieslist.length; i++) {
                 ctx.fillStyle = note.replyusers[i];
                 ctx.fillText(note.replies[i], note.x + 5, note.y + replyoffset );//+ (i * 15));
-                replyoffset = replyoffset + 8;
+                replyoffset = replyoffset + 12;
             }
 
         }
@@ -770,7 +770,7 @@ function initialize() {
 
     var youtubeSearchButton = document.createElement("input");
     youtubeSearchButton.setAttribute("id", "submitted");
-    youtubeSearchButton.className += "button-4";
+    youtubeSearchButton.className += "button1";
     youtubeSearchButton.setAttribute("type", "submit");
     youtubeSearchButton.setAttribute("value", "Search Youtube");
     //youtubeSearchButton.setAttribute("width", "100px");
@@ -795,7 +795,7 @@ function initialize() {
     notesFormDiv.setAttribute("id", "notesDiv");
     notesFormDiv.style.position = "absolute";
     notesFormDiv.style.right = "100px";
-    notesFormDiv.style.top = "90px";
+    notesFormDiv.style.top = "80px";
 
     /*
     var hideNotesButton = document.createElement("button");
@@ -825,6 +825,7 @@ function initialize() {
 
     var noteSubmit = document.createElement("input");
     noteSubmit.setAttribute("id", "savenotebutton");
+    noteSubmit.className += "button1";
     noteSubmit.setAttribute("type", "button");
     noteSubmit.setAttribute("value", "Add Note");
     noteSubmit.setAttribute("onclick", "save()");
@@ -849,16 +850,17 @@ function initialize() {
     var prefsDiv = document.createElement("div");
     prefsDiv.setAttribute("id", "prefsDiv");
     prefsDiv.style.position = "absolute";
-    prefsDiv.style.right = "0px";
-    prefsDiv.style.top = "130px";
+    prefsDiv.style.right = "100px";
+    prefsDiv.style.top = "110px";
+    prefsDiv.style.width = "130px";
 
     var viewPrefs = document.createElement("input");
     viewPrefs.setAttribute("id", "viewPrefs");
-    viewPrefs.className += "button-4";
+    viewPrefs.className += "button1";
     viewPrefs.setAttribute("type", "button");
     viewPrefs.setAttribute("value", "View Preferences");
     viewPrefs.setAttribute("onclick", "showPrefs()");
-    viewPrefs.style.right = "0px";
+    viewPrefs.style.float = "right";
     //viewPrefs.style.top = "40px";
     //viewPrefs.style.right = "1px";
     //viewPrefs.style.backgroundColor = "#6e6e6e";
@@ -869,7 +871,7 @@ function initialize() {
         var back = document.createElement("input");
         back.setAttribute("id", "back");
         back.setAttribute("type", "button");
-        back.className += "button-4";
+        back.className += "button1";
         back.setAttribute("value", "Change my Selections");
         back.setAttribute("onclick", "window.location.href='../../web/updatedcustomization.html'");
         //back.style.right = "1px";

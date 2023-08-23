@@ -746,8 +746,8 @@ function initialize() {
     progressBarCanvas.setAttribute("id", "progressCanvas");
     progressBarCanvas.setAttribute("width", "800");
     progressBarCanvas.setAttribute("height", "150");
-    // progressBarCanvas.style.position = "absolute";
-    progressBarCanvas.style.left = "25%";
+    progressBarCanvas.style.position = "absolute";
+    progressBarCanvas.style.left = "0%";
     progressBarCanvas.style.top = "10px";
 
     var progressBarDiv = document.getElementById("progress");
@@ -768,7 +768,7 @@ function initialize() {
 
     var youtubeSearchButton = document.createElement("input");
     youtubeSearchButton.setAttribute("id", "submitted");
-    youtubeSearchButton.className += "button-4";
+    //youtubeSearchButton.className += "button-4";
     youtubeSearchButton.setAttribute("type", "submit");
     youtubeSearchButton.setAttribute("value", "Search Youtube");
     //youtubeSearchButton.setAttribute("width", "100px");
@@ -852,7 +852,7 @@ function initialize() {
 
     var viewPrefs = document.createElement("input");
     viewPrefs.setAttribute("id", "viewPrefs");
-    viewPrefs.className += "button-4";
+    //viewPrefs.className += "button-4";
     viewPrefs.setAttribute("type", "button");
     viewPrefs.setAttribute("value", "View Preferences");
     viewPrefs.setAttribute("onclick", "showPrefs()");
@@ -866,7 +866,7 @@ function initialize() {
         var back = document.createElement("input");
         back.setAttribute("id", "back");
         back.setAttribute("type", "button");
-        back.className += "button-4";
+        //back.className += "button-4";
         back.setAttribute("value", "Change my Selections");
         back.setAttribute("onclick", "window.location.href='../../web/updatedcustomization.html'");
         //back.style.right = "1px";
@@ -895,7 +895,7 @@ function initialize() {
     //var repliesCanvas = document.getElementById("jscad");
     repliesCanvas.setAttribute("id", "canvas");
     repliesCanvas.setAttribute("width", "650");
-    repliesCanvas.setAttribute("height", "650");
+    repliesCanvas.setAttribute("height", "700");
     repliesCanvas.style.position = "absolute";
     repliesCanvas.style.top = "200px";
     repliesCanvas.style.right = "0px";
@@ -950,7 +950,7 @@ function initialize() {
     shareDiv.setAttribute("id", "shareDiv");
     // shareDiv.style.position = "absolute";
     shareDiv.style.right = "10px";
-    shareDiv.style.bottom = "30px";
+    shareDiv.style.bottom = "10px";
     shareDiv.style.zIndex = "100";
     shareDiv.style.position = "fixed";
 

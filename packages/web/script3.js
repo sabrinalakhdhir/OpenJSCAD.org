@@ -595,7 +595,6 @@ function handleMouseDown(e) {
     let replybuffer = 0;
     for (var i=0; i<noteslist.length; i++) {
         if (mouseX > noteslist[i].right - 35 && mouseX < noteslist[i].right - 5 && mouseY > noteslist[i].y + 100 && mouseY < noteslist[i].y + 115 && mouseIsDown) {
-            console.log("hitting reply");
             let currentNote = noteslist[i];
             // If there is already a reply on the current note, add an extra buffer to the y coordinate of the note
             if (currentNote.reply != "") {
@@ -747,11 +746,14 @@ function initialize() {
     progressBarCanvas.setAttribute("width", "800");
     progressBarCanvas.setAttribute("height", "150");
     // progressBarCanvas.style.position = "absolute";
-    progressBarCanvas.style.left = "25%";
-    progressBarCanvas.style.top = "10px";
+    //progressBarCanvas.style.left = "25%";
+    //progressBarCanvas.style.top = "10px";
 
     var progressBarDiv = document.getElementById("progress");
     progressBarDiv.appendChild(progressBarCanvas);
+    progressBarDiv.style.left = "0";
+    progressBarDiv.style.position = "absolute";
+    progressBarDiv.style.top = "0";
 
     // Youtube search bar
     var youtubeSearchForm = document.createElement("form");
@@ -847,7 +849,7 @@ function initialize() {
     var prefsDiv = document.createElement("div");
     prefsDiv.setAttribute("id", "prefsDiv");
     prefsDiv.style.position = "absolute";
-    prefsDiv.style.right = "100px";
+    prefsDiv.style.right = "0px";
     prefsDiv.style.top = "130px";
 
     var viewPrefs = document.createElement("input");
@@ -856,6 +858,7 @@ function initialize() {
     viewPrefs.setAttribute("type", "button");
     viewPrefs.setAttribute("value", "View Preferences");
     viewPrefs.setAttribute("onclick", "showPrefs()");
+    viewPrefs.style.right = "0px";
     //viewPrefs.style.top = "40px";
     //viewPrefs.style.right = "1px";
     //viewPrefs.style.backgroundColor = "#6e6e6e";
@@ -872,6 +875,7 @@ function initialize() {
         //back.style.right = "1px";
         //back.style.top = "80px";
         //back.style.backgroundColor = "#dbdbdb";
+        back.style.right = "150px";
         prefsDiv.appendChild(back);
     }
 

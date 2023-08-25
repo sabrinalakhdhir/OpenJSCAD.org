@@ -59,7 +59,7 @@
  
   <div id="edit" style="display: none;">
     <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
-    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
+    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" /> <!-- min was -1 -->
     <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
     <br>
     <br>
@@ -221,8 +221,6 @@ class blob {
   
 }
 
-
-
 const addCube = () => {
 
   //obtain the values from the textboxes for solid
@@ -240,23 +238,9 @@ const addCube = () => {
   const colorPicker = document.getElementById("colorPicker");
   const color = hexToRgbA(colorPicker.value);
 
-  if (solidShape == "cuboid") {
-    document.getElementById("lengthwidthDimension").style.display = "inline";
-    document.getElementById("radiusDimension").style.display = "none";
-    document.getElementById("heightDimension").style.display = "inline";
-  }
-  else {
-    document.getElementById("lengthwidthDimension").style.display = "none";
-    document.getElementById("radiusDimension").style.display = "inline";
-    document.getElementById("heightDimension").style.display = "inline";
-  }
-
-  document.getElementById("positionDetails").style.display = "inline";
-  document.getElementById("dimensionDetails").style.display = "inline";
-  document.getElementById("rotationDetails").style.display = "inline";
-
   const isblob = document.getElementById("cavityShapeSelect").value == 'none'?false:true;
   var blobb = null
+
   if (isblob){
     //obtaining values for blobb/cavity from user input
     const cavityXaxisInput = Number(document.getElementById("cavityXaxisInput").value);
@@ -343,7 +327,7 @@ function rgbToHex(r, g, b) {
 const updateCube = () => {
     const solidShape = document.getElementById("solidShapeSelect").value;
     const solidNumber = Number(document.getElementById("solidNumberInput").value);
-    document.getElementById("solidNumberInput").value = -1;
+    document.getElementById("solidNumberInput").value = -1; // was -1
 
     const height = Number(document.getElementById("heightInput").value);
     const width = Number(document.getElementById("widthInput").value);
@@ -449,7 +433,7 @@ function showCavitySelection() {
 
 const updateDimensionsOnScreen = () => {
     var selectedShape = document.getElementById("solidShapeSelect").value;
-    
+    /*
     if (selectedShape === "cylinder") {
       // Code to handle cylinder shape
       document.getElementById("heightInput").disabled = true;
@@ -472,6 +456,22 @@ const updateDimensionsOnScreen = () => {
     }
 
     document.getElementById("cavityShapeSelect").disabled = false;
+    */
+
+  if (document.getElementById("solidShapeSelect").value == 'cuboid') {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'cylinder'){
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+
+  document.getElementById("positionDetails").style.display = "inline";
+  document.getElementById("dimensionDetails").style.display = "inline";
+  document.getElementById("rotationDetails").style.display = "inline";
     // console.log("document.getElementById('cavityShapeCylinder').value:",document.getElementById("cavityShapeCylinder").checked)
     if(document.getElementById("cavityShapeSelect").value == 'cylinder'){
       document.getElementById("cavityDimensions").style.display = "inline";

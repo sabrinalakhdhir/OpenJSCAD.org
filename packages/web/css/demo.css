@@ -32,21 +32,22 @@ body {
   min-width: 100%;
   margin: 0px;
   --main-text-color: grey;
+  background-color: white
 }
 
-/* CSS */
-#savenotebutton {
-  background-color: #f8f9fa;
-  border: 1px solid #f8f9fa;
+/* CSS 
+#savenotebutton, #submitted, #viewPrefs, #back {
+  background-color: #d1d1d1;
+  border: 1px solid #d1d1d1;
   border-radius: 4px;
-  color: #3c4043;
+  color: #000000;
   cursor: pointer;
   font-family: arial,sans-serif;
   font-size: 14px;
-  height: 36px;
+  height: 30px;
   line-height: 27px;
   min-width: 54px;
-  padding: 0 16px;
+  padding: 0 10px;
   text-align: center;
   user-select: none;
   -webkit-user-select: none;
@@ -55,13 +56,28 @@ body {
 }
 
 #savenotebutton:hover {
-  border-color: #dadce0;
+  border: 3px solid #000000;
   box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
-  color: #202124;
+  color: #000000;
+}
+#submitted:hover {
+  border: 3px solid #000000;
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+  color: #000000;
+}
+#viewPrefs:hover {
+  border: 3px solid #000000;
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+  color: #000000;
+}
+#back:hover {
+  border: 3px solid #000000;
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 1px;
+  color: #000000;
 }
 
 #savenotebutton:focus {
-  border-color: #4285f4;
+  border-color: #000000;
   outline: none;
 }
 
@@ -88,6 +104,98 @@ body {
   width: 150px;
   height: 25px;
 }
+*/
+
+.float-container {
+  width: 100%;
+}
+
+.float-child {
+  width: 50%;
+  float: left;
+}
+
+input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #login-form-submit {
+  background-color: black;
+  border: none;
+  color: white;
+  padding: 3px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  transition-duration: 0.2s;
+  cursor: pointer;
+}
+
+input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton {
+  background-color: white; 
+  color: black; 
+  border: 1px solid gray;
+}
+
+input[type=button]:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover {
+  background-color: black;
+  color: white;
+}
+
+#main-holder {
+  width: 50%;
+  height: 70%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 0px 0px 5px 2px black;
+}
+
+#login-error-msg-holder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+#login-error-msg {
+  width: 23%;
+  text-align: center;
+  margin: 0;
+  padding: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #8a0000;
+  border: 1px solid #8a0000;
+  background-color: #e58f8f;
+  opacity: 0;
+}
+
+#error-msg-second-line {
+  display: block;
+}
+
+#login-form {
+  align-self: flex-start;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.login-form-field::placeholder {
+  color: #3a3a3a;
+}
+
+.login-form-field {
+  border: none;
+  border-bottom: 1px solid #3a3a3a;
+  margin-bottom: 10px;
+  border-radius: 3px;
+  outline: none;
+  padding: 0px 0px 5px 5px;
+}
+
 
 /* not demo specific code*/
 .jscad {
@@ -135,6 +243,7 @@ body {
   opacity: 0;
   overflow: hidden;
   position: absolute;
+  visibility: hidden;
 }
 
 #fileLoader + label {
@@ -163,7 +272,7 @@ body {
   width: 100%;
   padding: 0px 10px;
   user-select: none;
-  top: 30px;
+  top: 50px;
   z-index: 1;
 }
 
@@ -180,6 +289,7 @@ section#params {
   max-height: calc(100% - 6em);
   overflow-y: scroll;
   padding: 0;
+  width: 30%;
 }
 #paramsTable{
   display: flex;
@@ -299,9 +409,10 @@ h3 {
 
 #toolbar {
   position: absolute;
-  right: 10px;
-  top: 5px;
+  /*right: 10px;*/
+  top: 30px;
   z-index: 1;
+  left: 0px
 }
 #toolbar button {
   border-color: white;
@@ -379,6 +490,8 @@ textarea {
 
 #help {
   background-color: rgba(255, 255, 255, 0.6);
+  left: 0px;
+  width: 40%;
 }
 
 #help a {
@@ -443,7 +556,7 @@ button:hover svg {
 button:hover{
   background-color:rgba(0, 188, 212, 0.6);;
 }
-
+/*
 input[type="button"]{
   box-shadow: none;
   border-color: black;
@@ -457,7 +570,7 @@ input[type="button"]{
 input[type="button"]:hover{
   background-color:rgba(0, 188, 212, 0.6);
 }
-
+*/
 input[type="checkbox"] {
   opacity: 0.5;
 }

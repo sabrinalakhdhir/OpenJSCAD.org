@@ -10,22 +10,28 @@
       outline: 1px solid black;
     }
   </style>
+  <link defer rel="stylesheet" href="../../../packages/web/loginstyle.css">
+  <link defer rel="stylesheet" href="../../../packages/web/css/demo.css">
+  <!--
+      <link rel="stylesheet" href="loginstyle.css">
+  <link rel="stylesheet" type="text/css" href="./css/demo.css">
   <link src="../../../packages/web/css/demo.css" rel="stylesheet">
+  <link src="../../../packages/web/loginstyle.css" rel="stylesheet"> -->
 </head>
 <body style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
   <script language="javascript" src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
   <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
   <div id="progress"></div>
   <!-- add a checkbox to toggle between if the loaded file should replace existing models or be added to the existing models -->
-  <div id="importexport" style="margin-left: 40%">
- <input style="margin-left:15%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
+  <div id="importexport" style="display: -ms-inline-grid; margin-top: 100px;">
+ <input style="margin-left:20%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
 <br>
-<div style="margin-left: 7%; margin-top: 10px;">
+<div style="margin-top: 10px;">
  <input type="checkbox" id="addtoExistingModel" checked="true" />
  <label for="replaceModelsCheckbox">Add custom edits to an existing project</label>
 </div>
  <br>
- <div style="margin-left: 15%;">
+ <div style="margin-left: 20%;">
   <button id="saveButton" onclick="saveToFile()">Save Model</button>
   <button id="saveButton" onclick="exportToFile()">Export Model</button>
    
@@ -35,8 +41,9 @@
 </div>
   
 
-  <div width="50%" id="jscad" style="width: 50%; margin-right: 21%; float: right; margin-top: 40px;"></div>
-  <div width="50%" style="display: inline-block; width: 27%; margin-top: 40px;" id="userinputs"> <!--float: left;-->
+<div class="float-container" style="width: 100%;">
+  <div class="float-child" id="jscad" style="width: 45%; margin-right: 25%; float: right;"></div>
+  <div class="float-child" style="display: inline-block; width: 27%; margin-left: 10px;" id="userinputs"> <!--float: left;-->
  <!-- Input elements for dimensions and position -->
   <label for="solidShapeSelect">Select Shape to Create:</label>
   <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
@@ -53,7 +60,7 @@
  
   <div id="edit" style="display: none;">
     <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
-    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
+    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" /> <!-- min was -1 -->
     <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
     <br>
     <br>
@@ -141,7 +148,7 @@
 </div>
   <br> 
 <button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button>
-
+</div>
 </div> 
 
 <script defer src="../../../packages/web/script2.js"></script>
@@ -196,6 +203,7 @@ class blob {
     // this.solidNumber = solidNumber?solidNumber:0;
   
 }
+
 const addCube = () => {
 
   //obtain the values from the textboxes for solid
@@ -213,23 +221,9 @@ const addCube = () => {
   const colorPicker = document.getElementById("colorPicker");
   const color = hexToRgbA(colorPicker.value);
 
-  if (solidShape == "cuboid") {
-    document.getElementById("lengthwidthDimension").style.display = "inline";
-    document.getElementById("radiusDimension").style.display = "none";
-    document.getElementById("heightDimension").style.display = "inline";
-  }
-  else {
-    document.getElementById("lengthwidthDimension").style.display = "none";
-    document.getElementById("radiusDimension").style.display = "inline";
-    document.getElementById("heightDimension").style.display = "inline";
-  }
-
-  document.getElementById("positionDetails").style.display = "inline";
-  document.getElementById("dimensionDetails").style.display = "inline";
-  document.getElementById("rotationDetails").style.display = "inline";
-
   const isblob = document.getElementById("cavityShapeSelect").value == 'none'?false:true;
   var blobb = null
+
   if (isblob){
     //obtaining values for blobb/cavity from user input
     const cavityXaxisInput = Number(document.getElementById("cavityXaxisInput").value);
@@ -316,7 +310,7 @@ function rgbToHex(r, g, b) {
 const updateCube = () => {
     const solidShape = document.getElementById("solidShapeSelect").value;
     const solidNumber = Number(document.getElementById("solidNumberInput").value);
-    document.getElementById("solidNumberInput").value = -1;
+    document.getElementById("solidNumberInput").value = -1; // was -1
 
     const height = Number(document.getElementById("heightInput").value);
     const width = Number(document.getElementById("widthInput").value);
@@ -422,7 +416,7 @@ function showCavitySelection() {
 
 const updateDimensionsOnScreen = () => {
     var selectedShape = document.getElementById("solidShapeSelect").value;
-    
+    /*
     if (selectedShape === "cylinder") {
       // Code to handle cylinder shape
       document.getElementById("heightInput").disabled = true;
@@ -445,6 +439,22 @@ const updateDimensionsOnScreen = () => {
     }
 
     document.getElementById("cavityShapeSelect").disabled = false;
+    */
+
+  if (document.getElementById("solidShapeSelect").value == 'cuboid') {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'cylinder'){
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "inline";
+  }
+
+  document.getElementById("positionDetails").style.display = "inline";
+  document.getElementById("dimensionDetails").style.display = "inline";
+  document.getElementById("rotationDetails").style.display = "inline";
     // console.log("document.getElementById('cavityShapeCylinder').value:",document.getElementById("cavityShapeCylinder").checked)
     if(document.getElementById("cavityShapeSelect").value == 'cylinder'){
       document.getElementById("cavityDimensions").style.display = "inline";

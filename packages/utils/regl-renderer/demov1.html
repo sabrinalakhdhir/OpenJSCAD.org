@@ -27,6 +27,7 @@
  <br>
  <div style="margin-left: 15%;">
   <button id="saveButton" onclick="saveToFile()">Save Model</button>
+  <button id="saveButton" onclick="exportToFile()">Export Model</button>
    
   <!-- add a button to clear screan -->
   <button id="clearButton" onclick="clearScreen()">Clear Screen</button>
@@ -148,13 +149,14 @@
 // ********************
 // The design to render.
 // ********************
-const { booleans, colors, primitives, transforms, utils } = jscadModeling // modeling comes from the included MODELING library
+const { booleans, colors, primitives, transforms, utils, extrusions } = jscadModeling // modeling comes from the included MODELING library
 
 const { intersect, subtract, union } = booleans
 const { colorize } = colors
-const { cube, cuboid, line, sphere, cylinder, star, polyhedron } = primitives
+const { cube, cuboid, line, sphere, cylinder, star, polyhedron, polygon } = primitives
 const {translate, rotate} = transforms
 const { degToRad } = utils
+const { extrudeLinear } = extrusions
 
 var listofsolids = [];
 var listofsolidstorender = [];
@@ -177,25 +179,6 @@ class solid {
     this.shape = shape;
   }
 
-  //add a list of getter and setter functions
-    // getheight() {
-    //     return this.height;
-    // }
-    // setheight(value) {
-    //     this.height = value;
-    // }
-    // getwidth() {
-    //     return this.width;
-    // }
-    // setwidth(value) {
-    //     this.width = value;
-    // }
-    // getlength() {
-    //     return this.length;
-    // }
-    // setlength(value) {
-    //     this.length = value;
-    // }
 
 }
 
@@ -213,9 +196,6 @@ class blob {
     // this.solidNumber = solidNumber?solidNumber:0;
   
 }
-
-
-
 const addCube = () => {
 
   //obtain the values from the textboxes for solid
@@ -631,7 +611,52 @@ const clearScreen = () => {
   jscadGeometry = [];
   renderDemo({ cubes: listofsolidstorender, solid: jscadGeometry});
 }
+
 // Function to save the rendered model to a file
+const exportToFile = () => {
+    // Convert listofsolidstorender into STL format
+    const stlData = convertGeometryToSTL(listofsolidstorender);
+
+    // Combine the stlData with the existing stlContent
+    const combinedSTLContent = combineSTLContents(stlContent, stlData);
+
+    // Create a Blob with the combinedSTLContent
+    const stlBlob = new Blob([combinedSTLContent], { type: "application/octet-stream" });
+
+    // Create a download link and trigger the download
+    const stlLink = document.createElement("a");
+    stlLink.href = URL.createObjectURL(stlBlob);
+    stlLink.download = "combined_model.stl";
+    stlLink.click();
+};
+
+// Function to convert listofsolidstorender into STL format
+const convertGeometryToSTL = (geometryArray) => {
+    // Combine all the geometries in geometryArray into a single CSG object
+    const combinedGeometry = union(geometryArray);
+
+    // Convert the combinedGeometry into STL format
+    const stlData = serialize(combinedGeometry, { binary: true });
+    
+
+    return stlData;
+};
+
+// Function to combine stlContent with new stlData
+const combineSTLContents = (existingSTLContent, newSTLData) => {
+    // Combine the headers and triangle count of both STL files
+    const combinedSTLContent = existingSTLContent.slice(0, 80) + newSTLData.slice(80);
+
+    // Update the triangle count in the combined header
+    const triangleCount = new DataView(newSTLData.slice(80, 84)).getUint32(0, true);
+    new DataView(combinedSTLContent.slice(80, 84)).setUint32(0, triangleCount, true);
+
+    return combinedSTLContent;
+};
+
+
+
+// Function to save the rendered model to a file that can be editted later
 const saveToFile = () => {
     // Save STL Content as STL File
     //check if stlContent is empty
@@ -641,6 +666,7 @@ const saveToFile = () => {
       stlLink.href = URL.createObjectURL(stlBlob);
       stlLink.download = "model.stl";
       stlLink.click();
+      console.log('saved stl to file');
     }
 
     // Save listofsolids as JSON File
@@ -651,7 +677,17 @@ const saveToFile = () => {
     jsonLink.download = "model.json";
     jsonLink.click();
 
-    console.log('saved to files');
+    console.log('saved js to file');
+    }
+
+    //save svg to file
+    if (!(svgContent == "" || svgContent == undefined || svgContent == [])){
+      const svgBlob = new Blob([svgContent], { type: "image/svg+xml" });
+      const svgLink = document.createElement("a");
+      svgLink.href = URL.createObjectURL(svgBlob);
+      svgLink.download = "model.svg";
+      svgLink.click();
+      console.log('saved svg to file');
     }
 };
 
@@ -701,9 +737,108 @@ const convertSTLToGeometry = (stlData) => {
 
     return jscadGeometry;
 };
+function parseSVGPath(pathString) {
+  const commands = pathString.match(/[MmLlHhVvCcSsQqTtAaZz]\s*[^MmLlHhVvCcSsQqTtAaZz]*/g);
+  let currentPoint = { x: 0, y: 0 };
+  const points = [];
+
+  if (!commands) {
+    return points;
+  }
+
+  commands.forEach(command => {
+    const type = command[0];
+    const values = command.slice(1).trim().split(/\s|,/).map(Number);
+    // console.log("type:",type)
+    // console.log("values:",values)
+    // console.log('-----------------')
+
+    switch (type) {
+      case 'M':
+        currentPoint = { x: values[0], y: values[1] };
+        points.push(currentPoint);
+        break;
+      case 'L':
+        currentPoint = { x: values[0], y: values[1] };
+        points.push(currentPoint);
+        break;
+      case 'H':
+        currentPoint.x = values[0];
+        points.push(currentPoint);
+        break;
+      case 'V':
+        currentPoint.y = values[0];
+        points.push(currentPoint);
+        break;
+    // Handle other path commands if needed
+    default:
+        // Handle unknown commands or errors
+        break;
+    }
+
+  });
+
+  return points;
+}
+
+
+const convertSVGToGeometry = (svgArrayBuffer) => {
+  const svgString = new TextDecoder().decode(svgArrayBuffer);
+  //Parse the SVG string using a library like svg-parser or xmldom
+  const svgParser = new DOMParser();
+  const svgDoc = svgParser.parseFromString(svgString, "image/svg+xml");
+  const svg = svgDoc.documentElement;
+  const svgWidth = svg.getAttribute("width");
+  const svgHeight = svg.getAttribute("height");
+  const svgViewBox = svg.getAttribute("viewBox");
+ 
+  //iterate through all elements of svg.getElementsByTagName("path")
+  const jscadGeometry = [];
+  for (let i = 0; i < svg.getElementsByTagName("path").length; i++) {
+    const svgPath = svg.getElementsByTagName("path")[i].getAttribute("d");
+    //obtain color of the svg
+    var svgColor = svg.getElementsByTagName("path")[i].getAttribute("fill");
+    svgColor?console.log('svgColor[0]', svgColor[0]):null
+    //slice svgColor to remove rgb() if present and only retain numbers
+    if(svgColor){
+      if(svgColor[0] == 'r'){
+        svgColor = svgColor.slice(4,svgColor.length-1)
+      } else if (svgColor[0] == '#'){
+        svgColor = hexToRgbA(svgColor)
+      } else {
+        svgColor = svgColor
+      }
+    }
+    // svgColor?svgColor[0] == '#' ? svgColor = hexToRgbA(svgColor):svgColor = hexToRgbA('#'+svgColor):null;
+    const svgPathArray = parseSVGPath(svgPath);
+    const svgPathArray2D = svgPathArray.map((point) => [point.x, point.y]);
+    const svgPathArray3D = svgPathArray2D.map((point) => [point[0], point[1], 0]);
+    // const jscadGeometry = extrudeLinear({ height: 1 }, polygon({ points: svgPathArray3D }));
+     
+    if(svgColor){
+      //set default value if svgColor is not a number
+      if(svgColor)
+      if (!(svgColor[0] == 0 || svgColor[0] == 1 || svgColor[0] == 2 || svgColor[0] == 3 || svgColor[0] == 4 || svgColor[0] == 5 || svgColor[0] == 6 || svgColor[0] == 7 || svgColor[0] == 8 || svgColor[0] == 9)){
+        svgColor = 0,0,1,1
+      }
+    } 
+    //convert svgColor to array of numbers
+    var colors = svgColor?svgColor.toString().split(','):null;
+    colors?colors = colors.map(Number):[0,0,1,1];
+
+    //combine this with jscadGeometry from previous iteration with color
+    svgColor?jscadGeometry.push(colorize(colors,polygon({ points: svgPathArray3D }))):jscadGeometry.push(polygon({ points: svgPathArray3D }));
+    // jscadGeometry.push(polygon({ points: svgPathArray3D }));
+    // jscadGeometry.push(extrudeLinear({ height: 1 }, polygon({ points: svgPathArray3D })))
+    console.log("Generated Solid:", jscadGeometry);
+  }
+  
+  return jscadGeometry;
+};
 
 var jscadGeometry;
 var stlContent;
+var svgContent;
 // Function to load a model from a file
 const loadFromFile = (event) => {
      listofsolidstorender = [];
@@ -719,6 +854,19 @@ const loadFromFile = (event) => {
             // Call the rendering function here using stlContent
             console.log("stlContent", stlContent)
             jscadGeometry = convertSTLToGeometry(stlContent);
+            console.log("jscadGeometry", jscadGeometry)
+            // replaceModels? renderDemo({ cubes: [], solid: [jscadGeometry] }): renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
+            renderDemo({ solid: [jscadGeometry] })
+          };
+        reader.readAsArrayBuffer(file);
+    } else if (file.name.toLowerCase().endsWith('.svg')){
+      reader.onload = (svgEvent) => {
+            svgContent = svgEvent.target.result;
+            // Process the STL content as needed and render with jscadReglRenderer
+            // Call the rendering function here using stlContent
+            console.log("svgContent", svgContent)
+            jscadGeometry = convertSVGToGeometry(svgContent);
+            console.log("jscadGeometry", jscadGeometry)
             // replaceModels? renderDemo({ cubes: [], solid: [jscadGeometry] }): renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
             renderDemo({ solid: [jscadGeometry] })
           };
@@ -753,17 +901,6 @@ const loadFromFile = (event) => {
 }
     
 };
-
-
-// const getCubesforRendering = (parameters) => {
-//     if(parameters.cubes){
-//         for(i=0;i<parameters.cubes.length;i++){
-//         const cubee = colorize([0.5, 0, 0, 0.65], cuboid({ size: [parameters.cubes[i].height, parameters.cubes[i].width, parameters.cubes[i].length] }));
-//         listofsolidstorender.push(cubee);
-//     }
-//     }
-//     return listofsolidstorender;
-// }
 
   </script>
 
@@ -963,7 +1100,9 @@ const renderDemo = (parameters) => {
     var solidstorender = [] 
     solidstorender.push(parameters.cubes?parameters.cubes:null)
     solidstorender.push(parameters.solid?parameters.solid:null)
+    console.log('solidstorender',solidstorender)
     const entities = entitiesFromSolids({}, solidstorender?solidstorender:listofsolidstorender);
+    console.log('entities',entities)
       // const entities = entitiesFromSolids({}, parameters.cubes?parameters.cubes:listofsolidstorender);
 
       renderOptions.entities = [

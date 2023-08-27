@@ -49,8 +49,10 @@
  <!-- Input elements for dimensions and position -->
   <label for="solidShapeSelect">Select Shape to Create:</label>
   <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
-    <option value="cuboid">Cube or Rectangle</option>
+    <option value="cuboid" >Cube or Cuboid</option>
     <option value="cylinder">Cylinder</option>
+    <option value="circle">Circle</option>
+    <option value="rectangle">Rectangle or Square</option>
   </select>
   <br>
   <label for="colorPicker">Select Color:</label>
@@ -72,12 +74,16 @@
   <hr>
   <div id="positionDetails" style="display: none;">
   <label for="rotationInput"> <b>Position </b></label><br>
+  <div id="xyAxes" style="display: none;"></div>
   <label for="xaxisInput">X-Axis:</label>
   <input type="number" id="xaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="yaxisInput">Y-Axis:</label>
   <input type="number" id="yaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
+  <div id="zaxis" style="display: none;">
   <label for="zaxisInput">Z-Axis:</label>
   <input type="number" id="zaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
   <br><br>
 </div>
 
@@ -103,17 +109,21 @@
 <div id="rotationDetails" style="display: none;">
   <!-- add textboxes to add rotation to the solid -->
   <label for="rotationInput"> <b>Rotation</b></label><br>
+  <div id="xyRotation" style="display: none;"></div>
   <label for="rotationXaxisInput">X-Axis:</label>
   <input type="number" id="rotationXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="rotationYaxisInput">Y-Axis:</label>
   <input type="number" id="rotationYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
+  <div id="zRotation" style="display: none;">
   <label for="rotationZaxisInput">Z-Axis:</label>
   <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
   <br>
   <hr>
 </div>
 
-  <button style="float:right" onclick="showCavitySelection()">Add Cavity</button>
+  <button id="addCavityButton" style="float:right" onclick="showCavitySelection()">Add Cavity</button>
   <div id="addCavityDiv" style="display: none;">
     <label for="cavityShapeSelect">Cavity shape:</label>
     <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
@@ -162,7 +172,7 @@ const { booleans, colors, primitives, transforms, utils, extrusions, geometries,
 
 const { intersect, subtract, union } = booleans
 const { colorize } = colors
-const { cube, cuboid, line, sphere, cylinder, star, polyhedron, polygon } = primitives
+const { cube, cuboid, line, sphere, cylinder, star, polyhedron, polygon, rectangle, circle } = primitives
 const {translate, rotate} = transforms
 const { degToRad } = utils
 const { extrudeLinear } = extrusions
@@ -269,9 +279,17 @@ const addCube = () => {
     solidMade = cylinder({ height: solidd.length, radius: solidd.radius });
   } else if (solidShape == 'cuboid'){
     solidMade = cuboid({ size: [solidd.height, solidd.width, solidd.length] });
+  } else if (solidShape == 'circle'){
+    solidMade = circle({radius: solidd.radius});
+  } else if (solidShape == 'rectangle'){
+    solidMade = rectangle({size: [solidd.height, solidd.width]});
   }
   console.log("SOLID:",solidd)
-  newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, isblob?subtract(solidMade,cavity):solidMade)));
+  if(solidShape == 'cuboid' || solidShape == 'cylinder') {
+    newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, isblob?subtract(solidMade,cavity):solidMade)))
+  } else if (solidShape == 'rectangle' || solidShape == 'circle') {
+    newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, solidMade)))
+  }
   
   listofsolidstorender.push(newSolid);
   listofsolids.push(solidd);
@@ -397,6 +415,10 @@ const updateCube = () => {
             listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cylinder({ height: length, radius: radius })))));
           } else if (solidShape == 'cuboid') {
             listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] })))));
+          } else if (solidShape == 'rectangle') {
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, rectangle({ size: [height, width] })))));
+          } else if (solidShape == 'circle') {
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, circle({ radius: radius })))));
           }
           // listofsolidstorender[solidNumber] = translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] }))));
         }
@@ -448,15 +470,50 @@ const updateDimensionsOnScreen = () => {
     document.getElementById("cavityShapeSelect").disabled = false;
     */
 
-  if (document.getElementById("solidShapeSelect").value == 'cuboid') {
+  if (document.getElementById("solidShapeSelect").value == 'cuboid' ) {
     document.getElementById("lengthwidthDimension").style.display = "inline";
     document.getElementById("radiusDimension").style.display = "none";
     document.getElementById("heightDimension").style.display = "inline";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "inline";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "inline";
   }
   else if (document.getElementById("solidShapeSelect").value == 'cylinder'){
     document.getElementById("lengthwidthDimension").style.display = "none";
     document.getElementById("radiusDimension").style.display = "inline";
     document.getElementById("heightDimension").style.display = "inline";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "inline";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "inline";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'rectangle') {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "none";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'circle'){
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "none";
+  }
+  else {
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "none";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "none";
+    document.getElementById("zRotation").style.display = "none";
   }
 
   document.getElementById("positionDetails").style.display = "inline";
@@ -487,7 +544,14 @@ const updateDimensionsOnScreen = () => {
       document.getElementById("cavityXaxisInput").disabled = false;
       document.getElementById("cavityYaxisInput").disabled = false;
       document.getElementById("cavityZaxisInput").disabled = false;
-    } else if (document.getElementById("cavityShapeSelect").value == 'none'){
+    } else if (document.getElementById("solidShapeSelect").value == 'rectangle' || document.getElementById("solidShapeSelect").value == 'circle'){
+      //no cavity options
+      document.getElementById("cavityDimensions").style.display = "none";
+      document.getElementById("cubeCavityOptions").style.display = "none";
+      document.getElementById("cylinderCavityOptions").style.display = "none";
+      document.getElementById("addCavityButton").style.display = "none";
+    }
+    else if (document.getElementById("cavityShapeSelect").value == 'none'){
       document.getElementById("cavityHeightInput").disabled = true;
       document.getElementById("cavityWidthInput").disabled = true;
       document.getElementById("cavityLengthInput").disabled = true;
@@ -583,9 +647,19 @@ const retrieveAndDisplayDimensionsOnScreen = () => {
             solidMade = cylinder({ height: length, radius: radius })
           } else if(solidShape == 'cuboid'){
             solidMade = cuboid({ size: [height, width, length] });
+          } else if(solidShape == 'circle'){
+            solidMade = circle({radius: radius});
+          } else if(solidShape == 'rectangle'){
+            solidMade = rectangle({size: [height, width]});
           }
+         if(solidMade == 'cuboid' || solidMade == 'cylinder') {
           newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0,0.5,0,0.75], solidMade))));
           listofsolidstorender[solidNumber] = newSolid
+        } else if (solidMade == 'rectangle' || solidMade == 'circle'){
+          newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0,0.5,0,0.75], solidMade))));
+          listofsolidstorender[solidNumber] = newSolid
+        }
+         
         }
         console.log('solidstorender while editing',listofsolidstorender)
         //parse listofsolidstorender and change color of all solid except the one to be edited
@@ -1183,11 +1257,11 @@ const convertSVGToGeometry = (svgArrayBuffer) => {
       }
     } 
     //convert svgColor to array of numbers
-    var colors = svgColor?svgColor.toString().split(','):null;
-    colors?colors = colors.map(Number):[0,0,1,1];
+    var color = svgColor?svgColor.toString().split(','):null;
+    color?color = color.map(Number):[0,0,1,1];
 
     //combine this with jscadGeometry from previous iteration with color
-    svgColor?jscadGeometry.push(colorize(colors,polygon({ points: svgPathArray3D }))):jscadGeometry.push(polygon({ points: svgPathArray3D }));
+    svgColor?jscadGeometry.push(colorize(color,polygon({ points: svgPathArray3D }))):jscadGeometry.push(polygon({ points: svgPathArray3D }));
     // jscadGeometry.push(polygon({ points: svgPathArray3D }));
     // jscadGeometry.push(extrudeLinear({ height: 1 }, polygon({ points: svgPathArray3D })))
     console.log("Generated Solid:", jscadGeometry);
@@ -1199,6 +1273,7 @@ const convertSVGToGeometry = (svgArrayBuffer) => {
 var jscadGeometry;
 var stlContent;
 var svgContent;
+var loadedfile = 'none';
 // Function to load a model from a file
 const loadFromFile = (event) => {
      listofsolidstorender = [];
@@ -1208,6 +1283,7 @@ const loadFromFile = (event) => {
     const reader = new FileReader();
     
     if (file.name.toLowerCase().endsWith('.stl')){
+      loadedfile = 'STL';
       reader.onload = (stlEvent) => {
             stlContent = stlEvent.target.result;
             // Process the STL content as needed and render with jscadReglRenderer
@@ -1220,6 +1296,7 @@ const loadFromFile = (event) => {
           };
         reader.readAsArrayBuffer(file);
     } else if (file.name.toLowerCase().endsWith('.svg')){
+      loadedfile = 'SVG';
       reader.onload = (svgEvent) => {
             svgContent = svgEvent.target.result;
             // Process the STL content as needed and render with jscadReglRenderer

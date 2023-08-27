@@ -83,5 +83,9 @@
       "prefer-arrow-callback": "error",
       "no-var": "error"
     }
+  },
+  "dependencies": {
+    "@jscad/stl-serializer": "^2.1.15",
+    "@jscad/svg-serializer": "^2.3.13"
   }
 }

@@ -115,7 +115,7 @@ body {
   float: left;
 }
 
-input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #login-form-submit {
+input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #login-form-submit, #logout {
   background-color: black;
   border: none;
   color: white;
@@ -129,13 +129,13 @@ input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton,
   cursor: pointer;
 }
 
-input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton {
+input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #logout {
   background-color: white; 
   color: black; 
   border: 1px solid gray;
 }
 
-input[type=button]:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover {
+input[type=button]:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover, #logout:hover {
   background-color: black;
   color: white;
 }
@@ -147,8 +147,8 @@ input[type=button]:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:ho
   justify-items: center;
   align-items: center;
   background-color: white;
-  border-radius: 7px;
-  box-shadow: 0px 0px 5px 2px black;
+  /*border-radius: 7px;
+  box-shadow: 0px 0px 5px 2px black;*/
 }
 
 #login-error-msg-holder {

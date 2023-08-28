@@ -503,8 +503,8 @@ function checkShares() {
             document.getElementById("approvalLabel").style.display = "inline";
         }
         else {
-            document.getElementById("approvalButton").style.display = "none";
-            document.getElementById("approvalLabel").style.display = "none";
+            //document.getElementById("approvalButton").style.display = "none";
+            //document.getElementById("approvalLabel").style.display = "none";
         }
     }
     else if (userType == 'hcp') {
@@ -513,8 +513,8 @@ function checkShares() {
             document.getElementById("approvalLabel").style.display = "inline";
         }
         else {
-            document.getElementById("approvalButton").style.display = "none";
-            document.getElementById("approvalLabel").style.display = "none";
+            //document.getElementById("approvalButton").style.display = "none";
+            //document.getElementById("approvalLabel").style.display = "none";
         }
     }
     else {
@@ -523,8 +523,8 @@ function checkShares() {
             document.getElementById("approvalLabel").style.display = "inline";
         }
         else {
-            document.getElementById("approvalButton").style.display = "none";
-            document.getElementById("approvalLabel").style.display = "none";
+            //document.getElementById("approvalButton").style.display = "none";
+            //document.getElementById("approvalLabel").style.display = "none";
         }
     }
 }
@@ -739,6 +739,11 @@ document.getElementById("canvas").addEventListener("mousedown", handleMouseDown)
 document.getElementById("canvas").addEventListener("mousemove", handleMouseMove);
 document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
 
+function logout() {
+    saveProject();
+    location.replace("../../../packages/web/index.html")
+}
+
 function initialize() {
 
     // Progress bar
@@ -752,6 +757,14 @@ function initialize() {
 
     var progressBarDiv = document.getElementById("progress");
     progressBarDiv.appendChild(progressBarCanvas);
+
+    var logoutButton = document.createElement("button");
+    logoutButton.setAttribute("id", "logout");
+    logoutButton.setAttribute("onclick", "logout()");
+    logoutButton.innerHTML = "Logout";
+    logoutButton.style.position = "absolute";
+    logoutButton.style.left = "200px";
+    logoutButton.style.top = "-30px";
 
     // Youtube search bar
     var youtubeSearchForm = document.createElement("form");
@@ -787,6 +800,7 @@ function initialize() {
     document.getElementsByTagName("body")[0].appendChild(youtubeSearchDiv);
 
     youtubeSearchDiv.appendChild(youtubeSearchForm);
+    youtubeSearchDiv.appendChild(logoutButton);
 
     // Notes
     var notesFormDiv = document.createElement("div");
@@ -918,27 +932,27 @@ function initialize() {
     var approvalDiv = document.createElement("div");
     approvalDiv.setAttribute("id", "approvalDiv");
     // approvalDiv.style.position = "absolute";
-    approvalDiv.style.right = "130px";
-    approvalDiv.style.bottom = "950px";
+    approvalDiv.style.right = "162px";
+    approvalDiv.style.bottom = "5px";
     approvalDiv.style.zIndex = "100";
-    approvalDiv.style.position = "fixed";
+    approvalDiv.style.position = "absolute";
 
     var approvalForm = document.createElement("form");
-    notesForm.setAttribute("id", "approvalForm");
+    approvalForm.setAttribute("id", "approvalForm");
 
     var approvalButton = document.createElement("input");
     approvalButton.setAttribute("id", "approvalButton");
     approvalButton.setAttribute("type", "checkbox");
     approvalButton.setAttribute("name", "approval");
     approvalButton.setAttribute("value", "approved");
-    approvalButton.style.display = "none";
+    //approvalButton.style.display = "none";
 
     var approvalLabel = document.createElement("label");
     approvalLabel.setAttribute("id", "approvalLabel");
     approvalLabel.setAttribute("for", "approval");
     approvalLabel.innerHTML = "I am happy with this design!";
     approvalLabel.style.fontStyle = "bold";
-    approvalLabel.style.display = "none";
+    //approvalLabel.style.display = "none";
 
     approvalForm.appendChild(approvalButton);
     approvalForm.appendChild(approvalLabel);
@@ -951,7 +965,7 @@ function initialize() {
     shareDiv.setAttribute("id", "shareDiv");
     // shareDiv.style.position = "absolute";
     shareDiv.style.right = "10px";
-    shareDiv.style.bottom = "10px";
+    shareDiv.style.bottom = "25px";
     shareDiv.style.zIndex = "100";
     shareDiv.style.position = "fixed";
 

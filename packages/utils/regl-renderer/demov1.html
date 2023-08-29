@@ -22,24 +22,24 @@
   <script language="javascript" src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
   <!-- <script language="text/javascript" src="../../../node_modules/@jscad/stl-serializer/CSGToStlb.js" id="STL"></script> -->
   <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
-  <!-- <div id="progress"></div> -->
+  <div id="progress"></div>
   <!-- add a checkbox to toggle between if the loaded file should replace existing models or be added to the existing models -->
   <div id="importexport" style="display: -ms-inline-grid; margin-top: 100px;">
- <input style="margin-left:20%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
+ <input style="margin-left: 30%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
 <br>
-<div style="margin-top: 10px;">
+<div style="margin-top: 10px; margin-left: 5%;">
  <input type="checkbox" id="addtoExistingModel" checked="true" />
  <label for="replaceModelsCheckbox">Add custom edits to an existing project</label>
 </div>
  <br>
- <div style="margin-left: 20%;">
-  <button id="saveButton" onclick="saveToFile()">Save Model to Edit Later</button>
-  <button id="exportButton" onclick="exportAsSTLFile()">Export Model as STL</button>
-  <button id="exportButton" onclick="exportAsSVGFile()">Export Model as SVG</button>
-   
+
+ <div>
+  <button id="saveButton" onclick="saveToFile()">Save Model</button>
   <!-- add a button to clear screan -->
-  <button id="clearButton" onclick="clearScreen()">Clear Screen</button>
-  </div>
+  <button id="clearButton" onclick="clearScreen()">Clear Model</button>
+  <button id="exportButton" onclick="exportAsSTLFile()">Export as STL</button>
+  <button id="exportButton" onclick="exportAsSVGFile()">Export as SVG</button>
+</div>
 </div>
   
 
@@ -82,7 +82,7 @@
 </div>
 
 <div id="dimensionDetails" style="display: none;">
-  <label for="positionInput"><b> Dimensions</b></label><br>
+  <label for="positionInput"><b> Dimensions (mm)</b></label><br>
 <div id="lengthwidthDimension" style="display: none;">
   <label for="heightInput">Width:</label>
   <input type="number" id="heightInput" value="30" oninput="updateDimensionsOnScreen()"/>
@@ -113,7 +113,7 @@
   <hr>
 </div>
 
-  <button style="float:right" onclick="showCavitySelection()">Add Cavity</button>
+  <button id="cavityAdd" style="float:right" onclick="showCavitySelection()">Add Cavity</button>
   <div id="addCavityDiv" style="display: none;">
     <label for="cavityShapeSelect">Cavity shape:</label>
     <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
@@ -153,7 +153,7 @@
 </div>
 </div> 
 
-<!-- <script defer src="../../../packages/web/script2.js"></script> -->
+<script defer src="../../../packages/web/script2.js"></script>
   <script language="javascript">
 // ********************
 // The design to render.
@@ -1036,6 +1036,12 @@ const saveToFile = () => {
     jsonLink.click();
 
     console.log('saved js to file');
+
+    console.log("list of solids: " + listofsolids);
+    console.log("JSON: " + JSON.stringify(listofsolids));
+    console.log("STL: " + stlContent);
+    console.log("SVG: " + svgContent);
+
     }
 
     //save svg to file

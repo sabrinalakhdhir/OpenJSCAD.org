@@ -115,7 +115,7 @@ body {
   float: left;
 }
 
-input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #login-form-submit, #logout {
+input[type=button], #renderButton1, #cavityAdd, #deleteButton, #editButton, #exportButton, #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #login-form-submit, #logout {
   background-color: black;
   border: none;
   color: white;
@@ -129,13 +129,13 @@ input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton,
   cursor: pointer;
 }
 
-input[type=button], #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #logout {
+input[type=button], #renderButton1, #cavityAdd, #deleteButton, #editButton,#exportButton, #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #logout {
   background-color: white; 
   color: black; 
   border: 1px solid gray;
 }
 
-input[type=button]:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover, #logout:hover {
+input[type=button]:hover, #renderButton1:hover, #cavityAdd:hover, #deleteButton:hover, #editButton:hover, #exportButton:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover, #logout:hover {
   background-color: black;
   color: white;
 }

@@ -607,9 +607,9 @@ function handleMouseDown(e) {
             input.type = "text";
             input.style.position = "absolute";
             input.style.zIndex = "1";
-            input.style.left = noteslist[i].right + 908 + "px";
-            input.style.top = noteslist[i].y + 277 + "px";
-            input.style.width = "90px";
+            input.style.left = noteslist[i].right + 825 + "px";
+            input.style.top = noteslist[i].y + 297 + "px";
+            input.style.width = "140px";
             input.style.height = "15px";
             input.style.border = "1px solid black";
 
@@ -618,9 +618,10 @@ function handleMouseDown(e) {
             button.style.fontSize = "10px";
             button.innerHTML = "Reply";
             button.style.position = "absolute";
-            button.style.zIndex = "1";
-            button.style.left = noteslist[i].right + 1008 + "px";
-            button.style.top = noteslist[i].y + 277 + "px";
+            button.style.opacity = "1";
+            button.style.zIndex = "10";
+            button.style.left = noteslist[i].right + 970 + "px";
+            button.style.top = noteslist[i].y + 297 + "px";
             button.style.width = "40px";
             button.style.height = "20px";
             button.style.border = "1px solid black";

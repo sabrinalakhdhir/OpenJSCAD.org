@@ -28,6 +28,7 @@ const dom = (state, i18n, paramsCallbacktoStream, editorCallbackToStream) => {
     bodyEL.style.setProperty('--secondary-text-color', `${secondaryTextColor}`)
   }
 
+  
   const output = html`
     <div id='container'>
       <div id='header'>
@@ -66,6 +67,7 @@ const dom = (state, i18n, paramsCallbacktoStream, editorCallbackToStream) => {
   `
 
   return output
+  
 }
 
 module.exports = dom

@@ -74,7 +74,7 @@ loginButton.addEventListener("click", (e) => {
             localStorage.setItem("loginCount", loginCount);
         }
         else {
-            location.replace("designer.html");
+            location.replace("../utils/regl-renderer/demov1.html");
         }
     } else if (username === "productdesigner" && password === "pd1") {
         user = "pd";
@@ -88,6 +88,7 @@ loginButton.addEventListener("click", (e) => {
         }
         else {
             location.replace("../utils/regl-renderer/demov1.html");
+            //location.replace("demo\ copy.html");
         }
     }
     else if (username === "healthcareprof" && password === "hcp1") {
@@ -101,6 +102,7 @@ loginButton.addEventListener("click", (e) => {
         }
         else {
             location.replace("../utils/regl-renderer/demov1.html");
+            //location.replace("demo\ copy.html");
         }
     }
     else {

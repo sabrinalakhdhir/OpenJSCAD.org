@@ -739,6 +739,32 @@ document.getElementById("canvas").addEventListener("mousedown", handleMouseDown)
 document.getElementById("canvas").addEventListener("mousemove", handleMouseMove);
 document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
 
+document.getElementsByTagName("body")[0].addEventListener("keydown", function (e) { 
+    // Shit key
+    if (event.keyCode == 16) {
+        // change the user group to PD
+        // change the labels on the share buttons
+        console.log("detected PD key press");
+        loginUser = "pd";
+    }
+
+    // Escape key
+    if (event.keyCode == 27) {
+        // change the user group to HCP
+        // change the labels on the share buttons
+        console.log("detected HCP key press");
+        loginUser = "hcp";
+    }
+
+    // Arrow up key
+    if (event.keyCode == 38) {
+        // change the user group to end-user
+        // change the labels on the share buttons
+        console.log("detected end-user key press");
+        loginUser = "enduser";
+    }
+});
+
 function logout() {
     saveProject();
     location.replace("../../../packages/web/index.html")

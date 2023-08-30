@@ -135,6 +135,10 @@ input[type=button], #renderButton1, #cavityAdd, #deleteButton, #editButton,#expo
   border: 1px solid gray;
 }
 
+.replyButton:hover {
+  background-color: gray;
+}
+
 input[type=button]:hover, #renderButton1:hover, #cavityAdd:hover, #deleteButton:hover, #editButton:hover, #exportButton:hover, #savenotebutton:hover, #submitted:hover, #viewPrefs:hover, #back:hover, #saveButton:hover, #clearButton:hover, #logout:hover {
   background-color: black;
   color: white;

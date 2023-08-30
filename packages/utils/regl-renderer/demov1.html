@@ -54,10 +54,10 @@
  <!-- Input elements for dimensions and position -->
   <label for="solidShapeSelect">Select Shape to Create:</label>
   <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
-    <option value="cuboid" >Cube or Cuboid</option>
+    <option value="cuboid" >Cube</option>
     <option value="cylinder">Cylinder</option>
-    <option value="circle">Circle</option>
-    <option value="rectangle">Rectangle or Square</option>
+    <!--<option value="circle">Circle</option>
+    <option value="rectangle">Rectangle or Square</option>-->
   </select>
   <br>
   <label for="colorPicker">Select Color:</label>
@@ -72,8 +72,8 @@
     <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" /> <!-- min was -1 -->
     <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
     <br>
-    <br>
     <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+    <br>
   </div>
   <br>
   <hr>
@@ -95,7 +95,7 @@
 <div id="dimensionDetails" style="display: none; margin-left: 10px;">
   <label for="positionInput"><b> Dimensions (mm)</b></label><br>
 <div id="lengthwidthDimension" style="display: none;margin-left: 10px;">
-  <label for="heightInput" style="margin-left: 8px;">Width:</label>
+  <label for="heightInput" >Width:</label>
   <input type="number" id="heightInput" value="30" oninput="updateDimensionsOnScreen()"/>
   <label for="widthInput">Length:</label>
   <input type="number" id="widthInput" value="100" oninput="updateDimensionsOnScreen()"/>
@@ -126,11 +126,13 @@
   <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   </div>
   <br>
-  <hr>
-<!--</div>-->
+  <br>
+  <hr style="width:450px; margin-left: 10px;">
+</div>
 
-  <button id="cavityAdd" style="float:right; margin-right: 30px" onclick="showCavitySelection()">Add Cavity</button>
-  <div id="addCavityDiv" style="display: none;">
+
+  <button id="cavityAdd" style="float:right; margin-right: 40px" onclick="showCavitySelection()">Add Cavity</button>
+  <div id="addCavityDiv" style="display: none; margin-left: 10px;">
     <label for="cavityShapeSelect">Cavity shape:</label>
     <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
       <option value="none">None</option>
@@ -141,31 +143,32 @@
   <br><br>
 
   <!-- add textboxes to set the x,y,z axis of the cavity -->
-<div id="cavityDimensions" style="display: none;">
+<div id="cavityDimensions" style="display: none; margin-left: 10px;">
   <label for="cavityXaxisInput">X-Axis:</label>
   <input type="number" id="cavityXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityYaxisInput">Y-Axis:</label>
   <input type="number" id="cavityYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/> 
-  <label for="cavityZaxisInput">Z-Axis:</label>
+  <br>
+  <label for="cavityZaxisInput" style="margin-left: 10px;">Z-Axis:</label>
   <input type="number" id="cavityZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <br><br>
 </div>
 
-<div id="cubeCavityOptions" style="display: none;">
+<div id="cubeCavityOptions" style="display: none; margin-left: 10px;">
   <label for="cavityHeightInput">Width:</label>
   <input type="number" id="cavityHeightInput" value="10" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityWidthInput">Length:</label>
   <input type="number" id="cavityWidthInput" value="10" oninput="updateDimensionsOnScreen()"/>
 </div>
 
-<div id="cylinderCavityOptions" style="display: none;">
+<div id="cylinderCavityOptions" style="display: none; margin-left: 10px;">
   <label for="cavityLengthInput">Height:</label>
   <input type="number" id="cavityLengthInput" value="10" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityRadiusInput">Radius:</label>
   <input type="number" id="cavityRadiusInput" value="5" oninput="updateDimensionsOnScreen()"/>
 </div>
   <br> 
-<button id="editButton" onclick="updateCube()" style="float: right; margin-right: 30px">Save Changes</button>
+<button id="editButton" onclick="updateCube()" style="float: right; margin-right: 40px">Save Changes</button>
 </div>
 </div> 
 
@@ -434,6 +437,8 @@ const updateCube = () => {
     } else {
         alert("Invalid cube number!");
     }
+    // toggleEditMode()
+    updateDimensionsOnScreen();
 
     // Hide all the cavity options so they are not cluttering the screen until a new solid is being added or edited
     document.getElementById("addCavityDiv").style.display = "none";
@@ -441,8 +446,7 @@ const updateCube = () => {
     document.getElementById("cylinderCavityOptions").style.display = "none";
     document.getElementById("cubeCavityOptions").style.display = "none";
 
-    // toggleEditMode()
-    updateDimensionsOnScreen();
+    console.log("cavity options hidden");
 }
 
 function showCavitySelection() {
@@ -566,7 +570,7 @@ const updateDimensionsOnScreen = () => {
       document.getElementById("cavityYaxisInput").disabled = true;
       document.getElementById("cavityZaxisInput").disabled = true;
     }
-    
+  
 }
 updateDimensionsOnScreen();
 

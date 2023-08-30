@@ -1,5 +1,5 @@
 
-/*const html = require('nanohtml')
+const html = require('nanohtml')
 
 
 const toolbar = (state, i18n) => {
@@ -26,4 +26,4 @@ const toolbar = (state, i18n) => {
 
 
 module.exports = toolbar
-*/
+

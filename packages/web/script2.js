@@ -744,6 +744,8 @@ document.getElementsByTagName("body")[0].addEventListener("keydown", function (e
     if (event.keyCode == 16) {
         // change the user group to PD
         // change the labels on the share buttons
+        // hide the "Change my selections" button
+        // update progress bar
         console.log("detected PD key press");
         loginUser = "pd";
     }
@@ -752,6 +754,8 @@ document.getElementsByTagName("body")[0].addEventListener("keydown", function (e
     if (event.keyCode == 27) {
         // change the user group to HCP
         // change the labels on the share buttons
+        // hide the "Change my selections" button
+        // update progress bar
         console.log("detected HCP key press");
         loginUser = "hcp";
     }
@@ -760,6 +764,8 @@ document.getElementsByTagName("body")[0].addEventListener("keydown", function (e
     if (event.keyCode == 38) {
         // change the user group to end-user
         // change the labels on the share buttons
+        // show the "Change my selections" button
+        // update progress bar
         console.log("detected end-user key press");
         loginUser = "enduser";
     }

@@ -24,14 +24,15 @@
   <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
   <div id="progress"></div>
   <!-- add a checkbox to toggle between if the loaded file should replace existing models or be added to the existing models -->
-  <div id="importexport" style="display: -ms-inline-grid; margin-top: 130px;">
- <input style="margin-left: 35%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
+  <div id="importexport" style="display: -ms-inline-grid; margin-top: 100px;">
+ <input style="margin-left: 30%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
 <br>
-<div style="margin-top: 10px; margin-left: 15%; width: 400px">
+<div style="margin-top: 10px; margin-left: 5%;">
  <input type="checkbox" id="addtoExistingModel" checked="true" />
  <label for="replaceModelsCheckbox">Add custom edits to an existing project</label>
 </div>
  <br>
+<<<<<<< HEAD
  <div>
   <div style="margin-left: 45%;">
     <!--<button id="saveButton" onclick="saveToFile()">Save Model</button>-->
@@ -44,6 +45,17 @@
     <button id="exportButton" class="export" onclick="exportAsSTLFile()" style="visibility: hidden">Export as STL</button>
     <button id="exportButton" class="export" onclick="exportAsSVGFile()" style="visibility: hidden";>Export as SVG</button>
   </div>
+=======
+ <div style="margin-left: 20%;">
+  <button id="saveButton" onclick="saveToFile()">Save Model</button>
+  <button id="exportButton" onclick="exportAsSTLFile()">Export Model as STL</button>
+  <button id="exportButton" onclick="exportAsSVGFile()">Export Model as SVG</button>
+   
+  <!-- add a button to clear screan -->
+  <button id="clearButton" onclick="clearScreen()">Clear Model</button>
+  <button id="exportButton" onclick="exportAsSTLFile()">Export as STL</button>
+  <button id="exportButton" onclick="exportAsSVGFile()">Export as SVG</button>
+>>>>>>> 87a97d4631096d21cd534f0d706452d0ff2a0d7c
 </div>
 </div>
   
@@ -54,15 +66,15 @@
  <!-- Input elements for dimensions and position -->
   <label for="solidShapeSelect">Select Shape to Create:</label>
   <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
-    <option value="cuboid" >Cube</option>
+    <option value="cuboid" >Cube or Cuboid</option>
     <option value="cylinder">Cylinder</option>
-    <!--<option value="circle">Circle</option>
-    <option value="rectangle">Rectangle or Square</option>-->
+    <option value="circle">Circle</option>
+    <option value="rectangle">Rectangle or Square</option>
   </select>
   <br>
   <label for="colorPicker">Select Color:</label>
   <input type="color" id="colorPicker" value="#800080" onchange="updateDimensionsOnScreen()" />
-  <button id="renderButton1" onclick="addCube()" style="float: right; margin-right: 0px">Add Shape</button>
+  <button id="renderButton1" onclick="addCube()" style="float: right;">Add Shape</button>
 
   <br>
   <br>
@@ -72,8 +84,8 @@
     <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" /> <!-- min was -1 -->
     <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
     <br>
-    <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
     <br>
+    <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
   </div>
   <br>
   <hr>
@@ -92,47 +104,44 @@
   <br><br>
 </div>
 
-<div id="dimensionDetails" style="display: none; margin-left: 10px;">
+<div id="dimensionDetails" style="display: none;">
   <label for="positionInput"><b> Dimensions (mm)</b></label><br>
-<div id="lengthwidthDimension" style="display: none;margin-left: 10px;">
-  <label for="heightInput" >Width:</label>
+<div id="lengthwidthDimension" style="display: none;">
+  <label for="heightInput">Width:</label>
   <input type="number" id="heightInput" value="30" oninput="updateDimensionsOnScreen()"/>
   <label for="widthInput">Length:</label>
   <input type="number" id="widthInput" value="100" oninput="updateDimensionsOnScreen()"/>
 </div>
-<div id="heightDimension" style="display: none;margin-left: 10px;">
+<div id="heightDimension" style="display: none;">
   <label for="lengthInput">Height:</label>
   <input type="number" id="lengthInput" value="100" oninput="updateDimensionsOnScreen()"/>
 </div>
-<div id="radiusDimension" style="display: none;margin-left: 10px;">
+<div id="radiusDimension" style="display: none;">
   <label for="radiusInput">Radius:</label>
   <input type="number" id="radiusInput" value="10" oninput="updateDimensionsOnScreen()"/>
 </div>
   <br><br>
 </div>
 
-<div id="rotationDetails" style="display: none; margin-left: 10px;">
+<div id="rotationDetails" style="display: none;">
   <!-- add textboxes to add rotation to the solid -->
   <label for="rotationInput"> <b>Rotation</b></label><br>
-  <div id="xyRotation" style="display: none; margin-left: 10px;""><!--/div>-->
+  <div id="xyRotation" style="display: none;"></div>
   <label for="rotationXaxisInput">X-Axis:</label>
   <input type="number" id="rotationXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="rotationYaxisInput">Y-Axis:</label>
   <input type="number" id="rotationYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   </div>
-  <div id="zRotation" style="display: none; margin-left: 10px;">
-    <br>
-  <label for="rotationZaxisInput" style="margin-left: 10px;">Z-Axis:</label>
+  <div id="zRotation" style="display: none;">
+  <label for="rotationZaxisInput">Z-Axis:</label>
   <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   </div>
   <br>
-  <br>
-  <hr style="width:450px; margin-left: 10px;">
+  <hr>
 </div>
 
-
-  <button id="cavityAdd" style="float:right; margin-right: 40px" onclick="showCavitySelection()">Add Cavity</button>
-  <div id="addCavityDiv" style="display: none; margin-left: 10px;">
+  <button id="cavityAdd" style="float:right" onclick="showCavitySelection()">Add Cavity</button>
+  <div id="addCavityDiv" style="display: none;">
     <label for="cavityShapeSelect">Cavity shape:</label>
     <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
       <option value="none">None</option>
@@ -143,32 +152,31 @@
   <br><br>
 
   <!-- add textboxes to set the x,y,z axis of the cavity -->
-<div id="cavityDimensions" style="display: none; margin-left: 10px;">
+<div id="cavityDimensions" style="display: none;">
   <label for="cavityXaxisInput">X-Axis:</label>
   <input type="number" id="cavityXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityYaxisInput">Y-Axis:</label>
   <input type="number" id="cavityYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/> 
-  <br>
-  <label for="cavityZaxisInput" style="margin-left: 10px;">Z-Axis:</label>
+  <label for="cavityZaxisInput">Z-Axis:</label>
   <input type="number" id="cavityZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <br><br>
 </div>
 
-<div id="cubeCavityOptions" style="display: none; margin-left: 10px;">
+<div id="cubeCavityOptions" style="display: none;">
   <label for="cavityHeightInput">Width:</label>
   <input type="number" id="cavityHeightInput" value="10" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityWidthInput">Length:</label>
   <input type="number" id="cavityWidthInput" value="10" oninput="updateDimensionsOnScreen()"/>
 </div>
 
-<div id="cylinderCavityOptions" style="display: none; margin-left: 10px;">
+<div id="cylinderCavityOptions" style="display: none;">
   <label for="cavityLengthInput">Height:</label>
   <input type="number" id="cavityLengthInput" value="10" oninput="updateDimensionsOnScreen()"/>
   <label for="cavityRadiusInput">Radius:</label>
   <input type="number" id="cavityRadiusInput" value="5" oninput="updateDimensionsOnScreen()"/>
 </div>
   <br> 
-<button id="editButton" onclick="updateCube()" style="float: right; margin-right: 40px">Save Changes</button>
+<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button>
 </div>
 </div> 
 
@@ -437,8 +445,6 @@ const updateCube = () => {
     } else {
         alert("Invalid cube number!");
     }
-    // toggleEditMode()
-    updateDimensionsOnScreen();
 
     // Hide all the cavity options so they are not cluttering the screen until a new solid is being added or edited
     document.getElementById("addCavityDiv").style.display = "none";
@@ -446,7 +452,8 @@ const updateCube = () => {
     document.getElementById("cylinderCavityOptions").style.display = "none";
     document.getElementById("cubeCavityOptions").style.display = "none";
 
-    console.log("cavity options hidden");
+    // toggleEditMode()
+    updateDimensionsOnScreen();
 }
 
 function showCavitySelection() {
@@ -570,7 +577,7 @@ const updateDimensionsOnScreen = () => {
       document.getElementById("cavityYaxisInput").disabled = true;
       document.getElementById("cavityZaxisInput").disabled = true;
     }
-  
+    
 }
 updateDimensionsOnScreen();
 

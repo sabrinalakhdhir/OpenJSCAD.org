@@ -743,14 +743,18 @@ document.getElementById("canvas").addEventListener("mousemove", handleMouseMove)
 document.getElementById("canvas").addEventListener("mouseup", handleMouseUp);
 
 document.getElementsByTagName("body")[0].addEventListener("keydown", function (e) { 
-    // Shit key
-    if (event.keyCode == 16) {
+    // Equals key
+    if (event.keyCode == 187) {
         // change the user group to PD
         // change the labels on the share buttons
         // hide the "Change my selections" button
         // update progress bar
         console.log("detected PD key press");
         loginUser = "pd";
+
+        console.log(sharingLabel1.innerHTML)
+        sharingLabel1.innerHTML = "Share this design with end-users";
+        sharingLabel2.innerHTML = "Share this design with health care professionals";
     }
 
     // Escape key
@@ -761,6 +765,9 @@ document.getElementsByTagName("body")[0].addEventListener("keydown", function (e
         // update progress bar
         console.log("detected HCP key press");
         loginUser = "hcp";
+
+        sharingLabel1.innerHTML = "Share this design with end-users";
+        sharingLabel2.innerHTML = "Share this design with product designers";
     }
 
     // Arrow up key
@@ -771,6 +778,18 @@ document.getElementsByTagName("body")[0].addEventListener("keydown", function (e
         // update progress bar
         console.log("detected end-user key press");
         loginUser = "enduser";
+
+        sharingLabel1.innerHTML = "Share this design with health care professionals";
+        sharingLabel2.innerHTML = "Share this design with product designers";
+    }
+
+    // Semi-colon key
+    if (event.keyCode == 186) {
+        //enable the export options
+        var exportOptions = document.getElementsByClassName("export")
+        for(let i = 0; i < exportOptions.length; i++){
+            exportOptions[i].style.visibility = 'visible';
+        }
     }
 });
 
@@ -780,7 +799,6 @@ function logout() {
 }
 
 function initialize() {
-
     // Progress bar
     var progressBarCanvas = document.createElement("canvas");
     progressBarCanvas.setAttribute("id", "progressCanvas");
@@ -1022,8 +1040,10 @@ function initialize() {
     shareButton2.setAttribute("name", "share2");
     shareButton2.setAttribute("value", "share2");
 
-    var shareLabel1 = document.createElement("label");
-    var shareLabel2 = document.createElement("label");
+    const shareLabel1 = document.createElement("label");
+    shareLabel1.setAttribute("id", "sharingLabel1");
+    const shareLabel2 = document.createElement("label");
+    shareLabel2.setAttribute("id", "sharingLabel2");
 
     var linebreak = document.createElement("br");
 

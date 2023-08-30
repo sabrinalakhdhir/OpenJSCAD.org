@@ -33,16 +33,16 @@
 </div>
  <br>
  <div>
-  <div style="margin-left: 35%;">
-    <button id="saveButton" onclick="saveToFile()">Save Model</button>
+  <div style="margin-left: 45%;">
+    <!--<button id="saveButton" onclick="saveToFile()">Save Model</button>-->
     <!--<button id="exportButton" onclick="exportAsSTLFile()">Export Model as STL</button>
     <button id="exportButton" onclick="exportAsSVGFile()">Export Model as SVG</button>-->
     <!-- add a button to clear screan -->
     <button id="clearButton" onclick="clearScreen()">Clear Model</button>
   </div>
-  <div style="margin-left: 30%"> 
-    <button id="exportButton" onclick="exportAsSTLFile()">Export as STL</button>
-    <button id="exportButton" onclick="exportAsSVGFile()">Export as SVG</button>
+  <div style="margin-left: 30%" > 
+    <button id="exportButton" class="export" onclick="exportAsSTLFile()" style="visibility: hidden">Export as STL</button>
+    <button id="exportButton" class="export" onclick="exportAsSVGFile()" style="visibility: hidden";>Export as SVG</button>
   </div>
 </div>
 </div>

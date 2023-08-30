@@ -83,5 +83,8 @@
       "prefer-arrow-callback": "error",
       "no-var": "error"
     }
+  },
+  "dependencies": {
+    "browserify": "^17.0.0"
   }
 }

@@ -232,12 +232,12 @@ var canvas = document.getElementById('humanBody');
                    textctx.font = "14px Arial";
 		           textctx.fillText("Preferred Placements: " + selectedPlacements, 0, 20);
 
-                   alertsctx.fillStyle = "black";
+                    alertsctx.fillStyle = "black";
                     alertsctx.font = "16px Arial";
                     alertsctx.fillText("Step 2: Select preferred device style.", 0, 20);
                    
-                    // If the user has selected a placement, draw the alerting mechanism options
-                    showDevices(selectedPlacements);
+                // If the user has selected a placement, draw the alerting mechanism options
+                showDevices(selectedPlacements);
                    return
 		       }
 		   }

@@ -10,88 +10,122 @@
       outline: 1px solid black;
     }
   </style>
+  <link defer rel="stylesheet" href="../../../packages/web/loginstyle.css">
+  <link defer rel="stylesheet" href="../../../packages/web/css/demo.css">
+  <!--
+      <link rel="stylesheet" href="loginstyle.css">
+  <link rel="stylesheet" type="text/css" href="./css/demo.css">
   <link src="../../../packages/web/css/demo.css" rel="stylesheet">
+  <link src="../../../packages/web/loginstyle.css" rel="stylesheet"> -->
 </head>
 <body style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
   <script language="javascript" src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
+  <!-- <script language="text/javascript" src="../../../node_modules/@jscad/stl-serializer/CSGToStlb.js" id="STL"></script> -->
   <script language="javascript" src="./dist/jscad-regl-renderer.min.js" id="RENDERING"></script>
   <div id="progress"></div>
   <!-- add a checkbox to toggle between if the loaded file should replace existing models or be added to the existing models -->
-  <div id="importexport" style="margin-left: 40%">
- <input style="margin-left:15%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
+  <div id="importexport" style="display: -ms-inline-grid; margin-top: 100px;">
+ <input style="margin-left: 30%" type="file" id="loadFileInput" onchange="loadFromFile(event)"/>
 <br>
-<div style="margin-left: 7%; margin-top: 10px;">
+<div style="margin-top: 10px; margin-left: 5%;">
  <input type="checkbox" id="addtoExistingModel" checked="true" />
  <label for="replaceModelsCheckbox">Add custom edits to an existing project</label>
 </div>
  <br>
- <div style="margin-left: 15%;">
+ <div style="margin-left: 20%;">
   <button id="saveButton" onclick="saveToFile()">Save Model</button>
+  <button id="exportButton" onclick="exportAsSTLFile()">Export Model as STL</button>
+  <button id="exportButton" onclick="exportAsSVGFile()">Export Model as SVG</button>
    
   <!-- add a button to clear screan -->
-  <button id="clearButton" onclick="clearScreen()">Clear Screen</button>
-  </div>
+  <button id="clearButton" onclick="clearScreen()">Clear Model</button>
+  <button id="exportButton" onclick="exportAsSTLFile()">Export as STL</button>
+  <button id="exportButton" onclick="exportAsSVGFile()">Export as SVG</button>
+</div>
 </div>
   
 
-  <div width="50%" id="jscad" style="width: 50%; margin-right: 21%; float: right; margin-top: 40px;"></div>
-  <div width="50%" style="display: inline-block; width: 27%; margin-top: 40px;" id="userinputs"> <!--float: left;-->
+<div class="float-container" style="width: 100%;">
+  <div class="float-child" id="jscad" style="width: 45%; margin-right: 25%; float: right;"></div>
+  <div class="float-child" style="display: inline-block; width: 27%; margin-left: 10px;" id="userinputs"> <!--float: left;-->
  <!-- Input elements for dimensions and position -->
   <label for="solidShapeSelect">Select Shape to Create:</label>
   <select id="solidShapeSelect" name="solidShape" onchange="updateDimensionsOnScreen()">
-    <option value="cuboid">Cube or Rectangle</option>
+    <option value="cuboid" >Cube or Cuboid</option>
     <option value="cylinder">Cylinder</option>
+    <option value="circle">Circle</option>
+    <option value="rectangle">Rectangle or Square</option>
   </select>
   <br>
   <label for="colorPicker">Select Color:</label>
   <input type="color" id="colorPicker" value="#800080" onchange="updateDimensionsOnScreen()" />
   <button id="renderButton1" onclick="addCube()" style="float: right;">Add Shape</button>
-  <br>
-  <br>
-  OR
+
   <br>
   <br>
  
-  <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
-  <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" />
-  <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
-  <br>
-  <br>
-  <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+  <div id="edit" style="display: none;">
+    <label for="solidNumberInput" id="solidNumberLabel" visible="false">Edit Shape:</label>
+    <input type="number" id="solidNumberInput" min="-1" value="0"  oninput="retrieveAndDisplayDimensionsOnScreen()" /> <!-- min was -1 -->
+    <!--<button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button> -->
+    <br>
+    <br>
+    <button id="deleteButton" onclick="deletesolid()" style="float: right;">Delete Shape</button>
+  </div>
   <br>
   <hr>
+  <div id="positionDetails" style="display: none;">
   <label for="rotationInput"> <b>Position </b></label><br>
+  <div id="xyAxes" style="display: none;"></div>
   <label for="xaxisInput">X-Axis:</label>
   <input type="number" id="xaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="yaxisInput">Y-Axis:</label>
   <input type="number" id="yaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
+  <div id="zaxis" style="display: none;">
   <label for="zaxisInput">Z-Axis:</label>
   <input type="number" id="zaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
   <br><br>
+</div>
 
-  <label for="positionInput"><b> Dimensions</b></label><br>
+<div id="dimensionDetails" style="display: none;">
+  <label for="positionInput"><b> Dimensions (mm)</b></label><br>
+<div id="lengthwidthDimension" style="display: none;">
   <label for="heightInput">Width:</label>
-  <input type="number" id="heightInput" value="30" oninput=""/>
+  <input type="number" id="heightInput" value="30" oninput="updateDimensionsOnScreen()"/>
   <label for="widthInput">Length:</label>
-  <input type="number" id="widthInput" value="100" />
+  <input type="number" id="widthInput" value="100" oninput="updateDimensionsOnScreen()"/>
+</div>
+<div id="heightDimension" style="display: none;">
   <label for="lengthInput">Height:</label>
   <input type="number" id="lengthInput" value="100" oninput="updateDimensionsOnScreen()"/>
+</div>
+<div id="radiusDimension" style="display: none;">
   <label for="radiusInput">Radius:</label>
   <input type="number" id="radiusInput" value="10" oninput="updateDimensionsOnScreen()"/>
+</div>
   <br><br>
+</div>
 
+<div id="rotationDetails" style="display: none;">
   <!-- add textboxes to add rotation to the solid -->
   <label for="rotationInput"> <b>Rotation</b></label><br>
+  <div id="xyRotation" style="display: none;"></div>
   <label for="rotationXaxisInput">X-Axis:</label>
   <input type="number" id="rotationXaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
   <label for="rotationYaxisInput">Y-Axis:</label>
   <input type="number" id="rotationYaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
+  <div id="zRotation" style="display: none;">
   <label for="rotationZaxisInput">Z-Axis:</label>
   <input type="number" id="rotationZaxisInput" value="0" oninput="updateDimensionsOnScreen()"/>
+  </div>
   <br>
   <hr>
+</div>
 
-  <button style="float:right" onclick="showCavitySelection()">Add Cavity</button>
+  <button id="cavityAdd" style="float:right" onclick="showCavitySelection()">Add Cavity</button>
   <div id="addCavityDiv" style="display: none;">
     <label for="cavityShapeSelect">Cavity shape:</label>
     <select id="cavityShapeSelect" name="cavityShape" onchange="updateDimensionsOnScreen()">
@@ -126,9 +160,9 @@
   <label for="cavityRadiusInput">Radius:</label>
   <input type="number" id="cavityRadiusInput" value="5" oninput="updateDimensionsOnScreen()"/>
 </div>
-  
+  <br> 
 <button id="editButton" onclick="updateCube()" style="float: right;">Save Changes</button>
-
+</div>
 </div> 
 
 <script defer src="../../../packages/web/script2.js"></script>
@@ -136,13 +170,19 @@
 // ********************
 // The design to render.
 // ********************
-const { booleans, colors, primitives, transforms, utils } = jscadModeling // modeling comes from the included MODELING library
+const { booleans, colors, primitives, transforms, utils, extrusions, geometries, maths, measurements, } = jscadModeling // modeling comes from the included MODELING library
 
 const { intersect, subtract, union } = booleans
 const { colorize } = colors
-const { cube, cuboid, line, sphere, cylinder, star, polyhedron } = primitives
+const { cube, cuboid, line, sphere, cylinder, star, polyhedron, polygon, rectangle, circle } = primitives
 const {translate, rotate} = transforms
 const { degToRad } = utils
+const { extrudeLinear } = extrusions
+
+//use methods from the STL library to convert the CSG object to a binary STL file
+
+
+
 
 var listofsolids = [];
 var listofsolidstorender = [];
@@ -165,25 +205,6 @@ class solid {
     this.shape = shape;
   }
 
-  //add a list of getter and setter functions
-    // getheight() {
-    //     return this.height;
-    // }
-    // setheight(value) {
-    //     this.height = value;
-    // }
-    // getwidth() {
-    //     return this.width;
-    // }
-    // setwidth(value) {
-    //     this.width = value;
-    // }
-    // getlength() {
-    //     return this.length;
-    // }
-    // setlength(value) {
-    //     this.length = value;
-    // }
 
 }
 
@@ -201,8 +222,6 @@ class blob {
     // this.solidNumber = solidNumber?solidNumber:0;
   
 }
-
-
 
 const addCube = () => {
 
@@ -223,6 +242,7 @@ const addCube = () => {
 
   const isblob = document.getElementById("cavityShapeSelect").value == 'none'?false:true;
   var blobb = null
+
   if (isblob){
     //obtaining values for blobb/cavity from user input
     const cavityXaxisInput = Number(document.getElementById("cavityXaxisInput").value);
@@ -261,9 +281,17 @@ const addCube = () => {
     solidMade = cylinder({ height: solidd.length, radius: solidd.radius });
   } else if (solidShape == 'cuboid'){
     solidMade = cuboid({ size: [solidd.height, solidd.width, solidd.length] });
+  } else if (solidShape == 'circle'){
+    solidMade = circle({radius: solidd.radius});
+  } else if (solidShape == 'rectangle'){
+    solidMade = rectangle({size: [solidd.height, solidd.width]});
   }
   console.log("SOLID:",solidd)
-  newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, isblob?subtract(solidMade,cavity):solidMade)));
+  if(solidShape == 'cuboid' || solidShape == 'cylinder') {
+    newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, isblob?subtract(solidMade,cavity):solidMade)))
+  } else if (solidShape == 'rectangle' || solidShape == 'circle') {
+    newSolid = rotate([degToRad(solidd.xRotation), degToRad(solidd.yRotation) , degToRad(solidd.zRotation)],translate([solidd.xaxis,solidd.yaxis,solidd.zaxis],colorize(solidd.color, solidMade)))
+  }
   
   listofsolidstorender.push(newSolid);
   listofsolids.push(solidd);
@@ -272,6 +300,10 @@ const addCube = () => {
   console.log('jscadGeometry:', jscadGeometry);
   renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
   updateDimensionsOnScreen();
+
+  if (listofsolids.length >= 1) {
+    document.getElementById("edit").style.display = 'inline';
+  }
 }
 
 const hexToRgbA = (hex) => {
@@ -305,7 +337,7 @@ function rgbToHex(r, g, b) {
 const updateCube = () => {
     const solidShape = document.getElementById("solidShapeSelect").value;
     const solidNumber = Number(document.getElementById("solidNumberInput").value);
-    document.getElementById("solidNumberInput").value = -1;
+    document.getElementById("solidNumberInput").value = -1; // was -1
 
     const height = Number(document.getElementById("heightInput").value);
     const width = Number(document.getElementById("widthInput").value);
@@ -385,6 +417,10 @@ const updateCube = () => {
             listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cylinder({ height: length, radius: radius })))));
           } else if (solidShape == 'cuboid') {
             listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] })))));
+          } else if (solidShape == 'rectangle') {
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, rectangle({ size: [height, width] })))));
+          } else if (solidShape == 'circle') {
+            listofsolidstorender[solidNumber] = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize(color, circle({ radius: radius })))));
           }
           // listofsolidstorender[solidNumber] = translate([xaxis,yaxis,zaxis],(colorize(color, cuboid({ size: [height, width, length] }))));
         }
@@ -411,7 +447,7 @@ function showCavitySelection() {
 
 const updateDimensionsOnScreen = () => {
     var selectedShape = document.getElementById("solidShapeSelect").value;
-    
+    /*
     if (selectedShape === "cylinder") {
       // Code to handle cylinder shape
       document.getElementById("heightInput").disabled = true;
@@ -434,6 +470,57 @@ const updateDimensionsOnScreen = () => {
     }
 
     document.getElementById("cavityShapeSelect").disabled = false;
+    */
+
+  if (document.getElementById("solidShapeSelect").value == 'cuboid' ) {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "inline";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "inline";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "inline";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'cylinder'){
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "inline";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "inline";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "inline";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'rectangle') {
+    document.getElementById("lengthwidthDimension").style.display = "inline";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "none";
+  }
+  else if (document.getElementById("solidShapeSelect").value == 'circle'){
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "inline";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "inline";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "inline";
+    document.getElementById("zRotation").style.display = "none";
+  }
+  else {
+    document.getElementById("lengthwidthDimension").style.display = "none";
+    document.getElementById("radiusDimension").style.display = "none";
+    document.getElementById("heightDimension").style.display = "none";
+    document.getElementById("xyAxes").style.display = "none";
+    document.getElementById("zaxis").style.display = "none";
+    document.getElementById("xyRotation").style.display = "none";
+    document.getElementById("zRotation").style.display = "none";
+  }
+
+  document.getElementById("positionDetails").style.display = "inline";
+  document.getElementById("dimensionDetails").style.display = "inline";
+  document.getElementById("rotationDetails").style.display = "inline";
     // console.log("document.getElementById('cavityShapeCylinder').value:",document.getElementById("cavityShapeCylinder").checked)
     if(document.getElementById("cavityShapeSelect").value == 'cylinder'){
       document.getElementById("cavityDimensions").style.display = "inline";
@@ -459,7 +546,14 @@ const updateDimensionsOnScreen = () => {
       document.getElementById("cavityXaxisInput").disabled = false;
       document.getElementById("cavityYaxisInput").disabled = false;
       document.getElementById("cavityZaxisInput").disabled = false;
-    } else if (document.getElementById("cavityShapeSelect").value == 'none'){
+    } else if (document.getElementById("solidShapeSelect").value == 'rectangle' || document.getElementById("solidShapeSelect").value == 'circle'){
+      //no cavity options
+      document.getElementById("cavityDimensions").style.display = "none";
+      document.getElementById("cubeCavityOptions").style.display = "none";
+      document.getElementById("cylinderCavityOptions").style.display = "none";
+      document.getElementById("addCavityButton").style.display = "none";
+    }
+    else if (document.getElementById("cavityShapeSelect").value == 'none'){
       document.getElementById("cavityHeightInput").disabled = true;
       document.getElementById("cavityWidthInput").disabled = true;
       document.getElementById("cavityLengthInput").disabled = true;
@@ -555,9 +649,19 @@ const retrieveAndDisplayDimensionsOnScreen = () => {
             solidMade = cylinder({ height: length, radius: radius })
           } else if(solidShape == 'cuboid'){
             solidMade = cuboid({ size: [height, width, length] });
+          } else if(solidShape == 'circle'){
+            solidMade = circle({radius: radius});
+          } else if(solidShape == 'rectangle'){
+            solidMade = rectangle({size: [height, width]});
           }
+         if(solidMade == 'cuboid' || solidMade == 'cylinder') {
           newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0,0.5,0,0.75], solidMade))));
           listofsolidstorender[solidNumber] = newSolid
+        } else if (solidMade == 'rectangle' || solidMade == 'circle'){
+          newSolid = rotate([degToRad(xRotation), degToRad(yRotation), degToRad(zRotation)],translate([xaxis,yaxis,zaxis],(colorize([0,0.5,0,0.75], solidMade))));
+          listofsolidstorender[solidNumber] = newSolid
+        }
+         
         }
         console.log('solidstorender while editing',listofsolidstorender)
         //parse listofsolidstorender and change color of all solid except the one to be edited
@@ -600,7 +704,398 @@ const clearScreen = () => {
   jscadGeometry = [];
   renderDemo({ cubes: listofsolidstorender, solid: jscadGeometry});
 }
-// Function to save the rendered model to a file
+//make an async funciton
+
+const serializeBinary = (objects, options) => {
+  options.statusCallback && options.statusCallback({ progress: 0 })
+
+  // first check if the host is little-endian:
+  const buffer = new ArrayBuffer(4)
+  const int32buffer = new Int32Array(buffer, 0, 1)
+  const int8buffer = new Int8Array(buffer, 0, 4)
+  int32buffer[0] = 0x11223344
+  if (int8buffer[0] !== 0x44) {
+    throw new Error('Binary STL output is currently only supported on little-endian (Intel) processors')
+  }
+
+  let numtriangles = 0
+  let numpolygons = 0
+  console.log('objects:', objects)
+  objects.forEach((object, i) => {
+    console.log('object:', object.polygons)
+    if (object.polygons){
+      const polygons = geometries.geom3.toPolygons(object)
+    polygons.forEach((polygon) => {
+      const numvertices = polygon.vertices.length
+      const thisnumtriangles = (numvertices >= 3) ? numvertices - 2 : 0
+      numtriangles += thisnumtriangles
+      numpolygons += 1
+    })
+    }
+  })
+
+  const headerarray = new Uint8Array(80)
+  for (let i = 0; i < 80; i++) {
+    headerarray[i] = 65
+  }
+
+  const ar1 = new Uint32Array(1)
+  ar1[0] = numtriangles
+
+  // write the triangles to allTrianglesBuffer:
+  const allTrianglesBuffer = new ArrayBuffer(50 * numtriangles)
+  const allTrianglesBufferAsInt8 = new Int8Array(allTrianglesBuffer)
+
+  // a tricky problem is that a Float32Array must be aligned at 4-byte boundaries (at least in certain browsers)
+  // while each triangle takes 50 bytes. Therefore we write each triangle to a temporary buffer, and copy that
+  // into allTrianglesBuffer:
+  const triangleBuffer = new ArrayBuffer(50)
+  const triangleBufferAsInt8 = new Int8Array(triangleBuffer)
+
+  // each triangle consists of 12 floats:
+  const triangleFloat32array = new Float32Array(triangleBuffer, 0, 12)
+  // and one uint16:
+  const triangleUint16array = new Uint16Array(triangleBuffer, 48, 1)
+
+  let byteoffset = 0
+
+  objects.forEach((object) => {
+    if (object.polygons){
+      const polygons = geometries.geom3.toPolygons(object)
+    polygons.forEach((polygon, index) => {
+      const vertices = polygon.vertices
+      const numvertices = vertices.length
+      const plane = geometries.poly3.plane(polygon)
+      for (let i = 0; i < numvertices - 2; i++) {
+        triangleFloat32array[0] = plane[0]
+        triangleFloat32array[1] = plane[1]
+        triangleFloat32array[2] = plane[2]
+        let arindex = 3
+        for (let v = 0; v < 3; v++) {
+          const vv = v + ((v > 0) ? i : 0)
+          const vertex = vertices[vv]
+          triangleFloat32array[arindex++] = vertex[0]
+          triangleFloat32array[arindex++] = vertex[1]
+          triangleFloat32array[arindex++] = vertex[2]
+        }
+        triangleUint16array[0] = 0
+        // copy the triangle into allTrianglesBuffer:
+        allTrianglesBufferAsInt8.set(triangleBufferAsInt8, byteoffset)
+        byteoffset += 50
+      }
+
+      options.statusCallback && options.statusCallback({ progress: 100 * index / numpolygons })
+    })
+    }
+  })
+  options.statusCallback && options.statusCallback({ progress: 100 })
+  return [headerarray.buffer, ar1.buffer, allTrianglesBuffer] // 'blobable array'
+}
+
+function onComplete() {
+  console.log("Task completed!");
+}
+
+
+const isObject = o => o && Object.prototype.toString.call(o) === '[object Object]';
+
+function indenter (indentation) {
+  if (!(indentation > 0)) {
+    return txt => txt;
+  }
+  var space = ' '.repeat(indentation);
+  return txt => {
+
+    if (typeof txt !== 'string') {
+      return txt;
+    }
+
+    const arr = txt.split('\n');
+
+    if (arr.length === 1) {
+      return space + txt;
+    }
+
+    return arr
+      .map(e => (e.trim() === '') ? e : space + e)
+      .join('\n');
+  };
+}
+
+const clean = txt => txt
+  .split('\n')
+  .filter(e => e.trim() !== '')
+  .join('\n');
+
+
+function stringify (a, indentation) {
+  const cr = (indentation > 0) ? '\n' : '';
+  const indent = indenter(indentation);
+
+  function rec(a) {
+    let body = '';
+    let isFlat = true;
+
+    let res;
+    const isEmpty = a.some((e, i, arr) => {
+      if (i === 0) {
+        res = '<' + e;
+        return (arr.length === 1);
+      }
+
+      if (i === 1) {
+        if (isObject(e)) {
+          Object.keys(e).map(key => {
+            let val = e[key];
+            if (Array.isArray(val)) {
+              val = val.join(' ');
+            }
+            res += ' ' + key + '="' + val + '"';
+          });
+          if (arr.length === 2) {
+            return true;
+          }
+          res += '>';
+          return;
+        }
+        res += '>';
+      }
+
+      switch (typeof e) {
+      case 'string':
+      case 'number':
+      case 'boolean':
+      case 'undefined':
+        body += e + cr;
+        return;
+      }
+
+      isFlat = false;
+      body += rec(e);
+    });
+
+    if (isEmpty) {
+      return res + '/>' + cr; // short form
+    }
+
+    return isFlat
+      ? res + clean(body) + '</' + a[0] + '>' + cr
+      : res + cr + indent(body) + '</' + a[0] + '>' + cr;
+  }
+
+  return rec(a);
+}
+
+const serializeSVG = (options, ...objects) => {
+  const defaults = {
+    unit: 'mm', // em | ex | px | in | cm | mm | pt | pc
+    decimals: 10000,
+    version: "2.3.13",
+    statusCallback: null
+  }
+  options = Object.assign({}, defaults, options)
+
+  objects = utils.flatten(objects)
+
+  // convert only 2D geometries
+  const objects2d = objects.filter((object) => geometries.geom2.isA(object) || geometries.path2.isA(object))
+
+  if (objects2d.length === 0) throw new Error('only 2D geometries can be serialized to SVG')
+  if (objects.length !== objects2d.length) console.warn('some objects could not be serialized to SVG')
+
+  options.statusCallback && options.statusCallback({ progress: 0 })
+
+  // get the lower and upper bounds of ALL convertable objects
+  const bounds = getBounds(objects2d)
+
+  let width = 0
+  let height = 0
+  if (bounds) {
+    width = Math.round((bounds[1][0] - bounds[0][0]) * options.decimals) / options.decimals
+    height = Math.round((bounds[1][1] - bounds[0][1]) * options.decimals) / options.decimals
+  }
+
+  let body = ['svg',
+    {
+      width: width + options.unit,
+      height: height + options.unit,
+      viewBox: ('0 0 ' + width + ' ' + height),
+      fill: 'none',
+      'fill-rule': 'evenodd',
+      'stroke-width': '0.1px',
+      version: '1.1',
+      baseProfile: 'tiny',
+      xmlns: 'http://www.w3.org/2000/svg',
+      'xmlns:xlink': 'http://www.w3.org/1999/xlink'
+    }
+  ]
+  if (bounds) {
+    body = body.concat(convertObjects(objects2d, bounds, options))
+  }
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created by JSCAD SVG Serializer -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+${stringify(body, 2)}`
+
+  options.statusCallback && options.statusCallback({ progress: 100 })
+  return [svg]
+}
+
+/*
+ * Measure the bounds of the given objects, which is required to offset all points to positive X/Y values.
+ */
+const getBounds = (objects) => {
+  const allbounds = measurements.measureBoundingBox(objects)
+
+  if (objects.length === 1) return allbounds
+
+  // create a sum of the bounds
+  const sumofbounds = allbounds.reduce((sum, bounds) => {
+    maths.vec3.min(sum[0], sum[0], bounds[0])
+    maths.vec3.max(sum[1], sum[1], bounds[1])
+    return sum
+  }, [[0, 0, 0], [0, 0, 0]])
+  return sumofbounds
+}
+
+const convertObjects = (objects, bounds, options) => {
+  const xoffset = 0 - bounds[0][0] // offset to X=0
+  const yoffset = 0 - bounds[1][1] // offset to Y=0
+
+  const contents = []
+  objects.forEach((object, i) => {
+    options.statusCallback && options.statusCallback({ progress: 100 * i / objects.length })
+
+    if (geometries.geom2.isA(object)) {
+      contents.push(convertGeom2(object, [xoffset, yoffset], options))
+    }
+    if (geometries.path2.isA(object)) {
+      contents.push(convertPaths([object], [xoffset, yoffset], options))
+    }
+  })
+  return contents
+}
+
+const reflect = (x, y, px, py) => {
+  const ox = x - px
+  const oy = y - py
+  if (x === px && y === px) return [x, y]
+  if (x === px) return [x, py - (oy)]
+  if (y === py) return [px - (-ox), y]
+  return [px - (-ox), py - (oy)]
+}
+
+const convertGeom2 = (object, offsets, options) => {
+  const outlines = geometries.geom2.toOutlines(object)
+  const paths = outlines.map((outline) => geometries.path2.fromPoints({ closed: true }, outline))
+
+  options.color = 'black' // SVG initial color
+  if (object.color) options.color = convertColor(object.color)
+  options.id = null
+  if (object.id) options.id = object.id
+  options.class = null
+  if (object.class) options.class = object.class
+
+  return convertToContinousPath(paths, offsets, options)
+}
+
+const convertToContinousPath = (paths, offsets, options) => {
+  let instructions = ''
+  paths.forEach((path) => (instructions += convertPath(path, offsets, options)))
+  const d = { fill: options.color, d: instructions }
+  if (options.id) d.id = options.id
+  if (options.class) d.class = options.class
+  return ['g', ['path', d]]
+}
+
+const convertPaths = (paths, offsets, options) => paths.reduce((res, path, i) => {
+  const d = { d: convertPath(path, offsets, options) }
+  if (path.color) d.stroke = convertColor(path.color)
+  if (path.id) d.id = path.id
+  if (path.class) d.class = path.class
+  return res.concat([['path', d]])
+}, ['g'])
+
+const convertPath = (path, offsets, options) => {
+  let str = ''
+  const numpointsClosed = path.points.length + (path.isClosed ? 1 : 0)
+  for (let pointindex = 0; pointindex < numpointsClosed; pointindex++) {
+    let pointindexwrapped = pointindex
+    if (pointindexwrapped >= path.points.length) pointindexwrapped -= path.points.length
+    const point = path.points[pointindexwrapped]
+    const offpoint = [point[0] + offsets[0], point[1] + offsets[1]]
+    const svgpoint = reflect(offpoint[0], offpoint[1], 0, 0)
+    const x = Math.round(svgpoint[0] * options.decimals) / options.decimals
+    const y = Math.round(svgpoint[1] * options.decimals) / options.decimals
+    if (pointindex > 0) {
+      str += `L${x} ${y}`
+    } else {
+      str += `M${x} ${y}`
+    }
+  }
+  return str
+}
+
+const convertColor = (color) => `rgb(${color[0] * 255},${color[1] * 255},${color[2] * 255},${color[3] * 255})`
+
+const exportAsSVGFile = async () => {
+  const rawData = serializeSVG({unit: 'cm'}, listofsolidstorender.concat(jscadGeometry))
+
+  // Create a Blob from the SVG content
+  const blob = new Blob([rawData], { type: 'image/svg+xml' });
+
+  // Create a URL for the Blob
+  const blobURL = URL.createObjectURL(blob);
+
+  // Create a link element for downloading
+  const downloadLink = document.createElement('a');
+  downloadLink.href = blobURL;
+  downloadLink.download = 'output.svg'; // Set the desired filename
+
+  // Trigger the click event on the link to initiate download
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+
+  // Clean up by removing the link and revoking the Blob URL
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(blobURL);
+}
+// Function to save the rendered model to a stl file
+const exportAsSTLFile = async () => {
+    const options = { statusCallback: onComplete() }
+
+    // Call the serializeBinary function on a combination of listofsolidstorender and the existingstlmodel
+    const [header, ar1, allTrianglesBuffer] = serializeBinary(jscadGeometry?listofsolidstorender.concat(jscadGeometry):listofsolidstorender, options);
+    
+    // Combine the buffers into one ArrayBuffer
+    const combinedBuffer = new Uint8Array(header.byteLength + ar1.byteLength + allTrianglesBuffer.byteLength );
+    combinedBuffer.set(new Uint8Array(header), 0);
+    combinedBuffer.set(new Uint8Array(ar1), header.byteLength);
+    combinedBuffer.set(new Uint8Array(allTrianglesBuffer), header.byteLength + ar1.byteLength);
+
+    // Create a Blob from the combinedBuffer
+    const blob = new Blob([combinedBuffer], { type: 'application/octet-stream' });
+
+    // Create a URL for the Blob
+    const blobURL = URL.createObjectURL(blob);
+
+    // Create a link element for downloading
+    const downloadLink = document.createElement('a');
+    downloadLink.href = blobURL;
+    downloadLink.download = 'output.stl'; // Set the desired filename
+
+    // Trigger the click event on the link to initiate download
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    // Clean up by removing the link and revoking the Blob URL
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(blobURL);
+};
+
+
+// Function to save the rendered model to a file that can be editted later
 const saveToFile = () => {
     // Save STL Content as STL File
     //check if stlContent is empty
@@ -610,6 +1105,7 @@ const saveToFile = () => {
       stlLink.href = URL.createObjectURL(stlBlob);
       stlLink.download = "model.stl";
       stlLink.click();
+      console.log('saved stl to file');
     }
 
     // Save listofsolids as JSON File
@@ -620,20 +1116,32 @@ const saveToFile = () => {
     jsonLink.download = "model.json";
     jsonLink.click();
 
-    console.log('saved to files');
+    console.log('saved js to file');
+
+    }
+
+    //save svg to file
+    if (!(svgContent == "" || svgContent == undefined || svgContent == [])){
+      const svgBlob = new Blob([svgContent], { type: "image/svg+xml" });
+      const svgLink = document.createElement("a");
+      svgLink.href = URL.createObjectURL(svgBlob);
+      svgLink.download = "model.svg";
+      svgLink.click();
+      console.log('saved svg to file');
     }
 };
 
 
 const convertSTLToGeometry = (stlData) => {
+    console.log('stlData:',stlData)
     const dataView = new DataView(stlData);
-
+    console.log('dataView:',dataView)
     // Read the STL header (80 bytes) - this can be skipped if not needed
     const header = new TextDecoder().decode(new Uint8Array(stlData.slice(0, 80)));
-
+    console.log('header:',header)
     // Get the number of triangles (faces) in the STL
     const numTriangles = dataView.getUint32(80, true);
-
+    console.log('numTriangles:',numTriangles)
     // Initialize arrays to store vertex data
     const vertices = [];
     const vertexIndices = []; // To store vertex indices for each face
@@ -646,7 +1154,7 @@ const convertSTLToGeometry = (stlData) => {
             dataView.getFloat32(byteOffset + 4, true),
             dataView.getFloat32(byteOffset + 8, true)
         ];
-
+        console.log("Normal:", normal);
         byteOffset += 12; // Move to next normal
 
         const faceVertices = [];
@@ -656,6 +1164,7 @@ const convertSTLToGeometry = (stlData) => {
                 dataView.getFloat32(byteOffset + 4, true),
                 dataView.getFloat32(byteOffset + 8, true)
             ];
+            console.log("Vertex:", vertex);
             vertices.push(vertex);
             faceVertices.push(vertices.length - 1); // Store vertex index
             byteOffset += 12; // Move to next vertex
@@ -670,9 +1179,109 @@ const convertSTLToGeometry = (stlData) => {
 
     return jscadGeometry;
 };
+function parseSVGPath(pathString) {
+  const commands = pathString.match(/[MmLlHhVvCcSsQqTtAaZz]\s*[^MmLlHhVvCcSsQqTtAaZz]*/g);
+  let currentPoint = { x: 0, y: 0 };
+  const points = [];
+
+  if (!commands) {
+    return points;
+  }
+
+  commands.forEach(command => {
+    const type = command[0];
+    const values = command.slice(1).trim().split(/\s|,/).map(Number);
+    // console.log("type:",type)
+    // console.log("values:",values)
+    // console.log('-----------------')
+
+    switch (type) {
+      case 'M':
+        currentPoint = { x: values[0], y: values[1] };
+        points.push(currentPoint);
+        break;
+      case 'L':
+        currentPoint = { x: values[0], y: values[1] };
+        points.push(currentPoint);
+        break;
+      case 'H':
+        currentPoint.x = values[0];
+        points.push(currentPoint);
+        break;
+      case 'V':
+        currentPoint.y = values[0];
+        points.push(currentPoint);
+        break;
+    // Handle other path commands if needed
+    default:
+        // Handle unknown commands or errors
+        break;
+    }
+
+  });
+
+  return points;
+}
+
+
+const convertSVGToGeometry = (svgArrayBuffer) => {
+  const svgString = new TextDecoder().decode(svgArrayBuffer);
+  //Parse the SVG string using a library like svg-parser or xmldom
+  const svgParser = new DOMParser();
+  const svgDoc = svgParser.parseFromString(svgString, "image/svg+xml");
+  const svg = svgDoc.documentElement;
+  const svgWidth = svg.getAttribute("width");
+  const svgHeight = svg.getAttribute("height");
+  const svgViewBox = svg.getAttribute("viewBox");
+ 
+  //iterate through all elements of svg.getElementsByTagName("path")
+  const jscadGeometry = [];
+  for (let i = 0; i < svg.getElementsByTagName("path").length; i++) {
+    const svgPath = svg.getElementsByTagName("path")[i].getAttribute("d");
+    //obtain color of the svg
+    var svgColor = svg.getElementsByTagName("path")[i].getAttribute("fill");
+    svgColor?console.log('svgColor[0]', svgColor[0]):null
+    //slice svgColor to remove rgb() if present and only retain numbers
+    if(svgColor){
+      if(svgColor[0] == 'r'){
+        svgColor = svgColor.slice(4,svgColor.length-1)
+      } else if (svgColor[0] == '#'){
+        svgColor = hexToRgbA(svgColor)
+      } else {
+        svgColor = svgColor
+      }
+    }
+    // svgColor?svgColor[0] == '#' ? svgColor = hexToRgbA(svgColor):svgColor = hexToRgbA('#'+svgColor):null;
+    const svgPathArray = parseSVGPath(svgPath);
+    const svgPathArray2D = svgPathArray.map((point) => [point.x, point.y]);
+    const svgPathArray3D = svgPathArray2D.map((point) => [point[0], point[1], 0]);
+    // const jscadGeometry = extrudeLinear({ height: 1 }, polygon({ points: svgPathArray3D }));
+     
+    if(svgColor){
+      //set default value if svgColor is not a number
+      if(svgColor)
+      if (!(svgColor[0] == 0 || svgColor[0] == 1 || svgColor[0] == 2 || svgColor[0] == 3 || svgColor[0] == 4 || svgColor[0] == 5 || svgColor[0] == 6 || svgColor[0] == 7 || svgColor[0] == 8 || svgColor[0] == 9)){
+        svgColor = 0,0,1,1
+      }
+    } 
+    //convert svgColor to array of numbers
+    var color = svgColor?svgColor.toString().split(','):null;
+    color?color = color.map(Number):[0,0,1,1];
+
+    //combine this with jscadGeometry from previous iteration with color
+    svgColor?jscadGeometry.push(colorize(color,polygon({ points: svgPathArray3D }))):jscadGeometry.push(polygon({ points: svgPathArray3D }));
+    // jscadGeometry.push(polygon({ points: svgPathArray3D }));
+    // jscadGeometry.push(extrudeLinear({ height: 1 }, polygon({ points: svgPathArray3D })))
+    console.log("Generated Solid:", jscadGeometry);
+  }
+  
+  return jscadGeometry;
+};
 
 var jscadGeometry;
 var stlContent;
+var svgContent;
+var loadedfile = 'none';
 // Function to load a model from a file
 const loadFromFile = (event) => {
      listofsolidstorender = [];
@@ -682,12 +1291,27 @@ const loadFromFile = (event) => {
     const reader = new FileReader();
     
     if (file.name.toLowerCase().endsWith('.stl')){
+      loadedfile = 'STL';
       reader.onload = (stlEvent) => {
             stlContent = stlEvent.target.result;
             // Process the STL content as needed and render with jscadReglRenderer
             // Call the rendering function here using stlContent
             console.log("stlContent", stlContent)
             jscadGeometry = convertSTLToGeometry(stlContent);
+            console.log("jscadGeometry", jscadGeometry)
+            // replaceModels? renderDemo({ cubes: [], solid: [jscadGeometry] }): renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
+            renderDemo({ solid: [jscadGeometry] })
+          };
+        reader.readAsArrayBuffer(file);
+    } else if (file.name.toLowerCase().endsWith('.svg')){
+      loadedfile = 'SVG';
+      reader.onload = (svgEvent) => {
+            svgContent = svgEvent.target.result;
+            // Process the STL content as needed and render with jscadReglRenderer
+            // Call the rendering function here using stlContent
+            console.log("svgContent", svgContent)
+            jscadGeometry = convertSVGToGeometry(svgContent);
+            console.log("jscadGeometry", jscadGeometry)
             // replaceModels? renderDemo({ cubes: [], solid: [jscadGeometry] }): renderDemo({cubes:listofsolidstorender, solid: jscadGeometry});
             renderDemo({ solid: [jscadGeometry] })
           };
@@ -707,11 +1331,23 @@ const loadFromFile = (event) => {
             else if (cube.blobb.shape == "cuboid") {
               blobb = translate([cube.blobb.xaxis,cube.blobb.yaxis,cube.blobb.zaxis],cuboid({size: [cube.blobb.height,cube.blobb.width,cube.blobb.length]}));
             }
-            return newSolid = rotate([cube.xRotation, yRotation, zRotation],translate([cube.xaxis,cube.yaxis,cube.zaxis],colorize(cube.color, subtract(cuboid({ size: [cube.height, cube.width, cube.length] }),blobb))));
+            if(cube.shape == "cuboid"){
+              return rotate([degToRad(cube.xRotation), degToRad(cube.yRotation), degToRad(cube.zRotation)],translate([cube.xaxis,cube.yaxis,cube.zaxis],colorize(cube.color, subtract(cuboid({ size: [cube.height, cube.width, cube.length] }),blobb))));
+            } else if(cube.shape == "cylinder"){
+              return rotate([degToRad(cube.xRotation), degToRad(cube.yRotation), degToRad(cube.zRotation)],translate([cube.xaxis,cube.yaxis,cube.zaxis],colorize(cube.color, subtract(cylinder({ radius: cube.radius, height: cube.length }),blobb))));
+            }
+            
           } 
-          else
-            return rotate([cube.xRotation, cube.yRotation, cube.zRotation],translate([cube.xaxis, cube.yaxis, cube.zaxis], colorize(cube.color, cuboid({ size: [cube.height, cube.width, cube.length] }))));
+          else {
+            if (cube.shape == "cylinder"){
+              return rotate([degToRad(cube.xRotation), degToRad(cube.yRotation), degToRad(cube.zRotation)],translate([cube.xaxis, cube.yaxis, cube.zaxis], colorize(cube.color, cylinder({ height:cube.length, radius:cube.radius }))));
+            } else if (cube.shape == "cuboid"){
+              return rotate([degToRad(cube.xRotation), degToRad(cube.yRotation), degToRad(cube.zRotation)],translate([cube.xaxis, cube.yaxis, cube.zaxis], colorize(cube.color, cuboid({ size: [cube.height, cube.width, cube.length] }))));
+            }
+          }
+            
         });
+        retrieveAndDisplayDimensionsOnScreen();
         console.log("listofsolidstorender", listofsolidstorender)
         console.log("mostrecentlistofsolids", mostrecentlistofsolids)
         console.log('combined:', listofsolidstorender.push(mostrecentlistofsolids))
@@ -722,17 +1358,6 @@ const loadFromFile = (event) => {
 }
     
 };
-
-
-// const getCubesforRendering = (parameters) => {
-//     if(parameters.cubes){
-//         for(i=0;i<parameters.cubes.length;i++){
-//         const cubee = colorize([0.5, 0, 0, 0.65], cuboid({ size: [parameters.cubes[i].height, parameters.cubes[i].width, parameters.cubes[i].length] }));
-//         listofsolidstorender.push(cubee);
-//     }
-//     }
-//     return listofsolidstorender;
-// }
 
   </script>
 
@@ -932,7 +1557,9 @@ const renderDemo = (parameters) => {
     var solidstorender = [] 
     solidstorender.push(parameters.cubes?parameters.cubes:null)
     solidstorender.push(parameters.solid?parameters.solid:null)
+    console.log('solidstorender',solidstorender)
     const entities = entitiesFromSolids({}, solidstorender?solidstorender:listofsolidstorender);
+    console.log('entities',entities)
       // const entities = entitiesFromSolids({}, parameters.cubes?parameters.cubes:listofsolidstorender);
 
       renderOptions.entities = [

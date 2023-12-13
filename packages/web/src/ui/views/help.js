@@ -3,7 +3,7 @@ const html = require('nanohtml')
 
 const help = (state, i18n) => {
   const exampleUl = require('./examples')(state, i18n)
-  const electronicsUl = require('./electronics')(state, i18n)
+  //const electronicsUl = require('./electronics')(state, i18n)
   const io = require('./io.js')(state, i18n)
   
   return html`
@@ -17,10 +17,11 @@ const help = (state, i18n) => {
         <h3>${i18n`Choose from Preexisting Designs`}:</h3>
         ${exampleUl}
         
-        ${electronicsUl}
       </div>
     </section>
   `
 }
 
 module.exports = help
+
+// commented out after ${exampleUI} : ${electronicsUl}

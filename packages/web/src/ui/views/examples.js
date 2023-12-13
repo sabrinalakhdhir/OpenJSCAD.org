@@ -9,12 +9,14 @@ const examples = (state, i18n) => {
   let newPath = origin + path.dirname(baseUrl.pathname)
   newPath = newPath.endsWith('/') ? newPath : newPath + path.sep
 
+  console.log(newPath)
+
   const examplesMenus = []
   for (const groupName in examplesData) {
     if (!Object.prototype.hasOwnProperty.call(examplesData, groupName)) continue
     const examplesElements = examplesData[groupName].map((example) =>
       html`<li>
-          <a class="example" title="${example.description}" data-path="${newPath}${example.filePath}" href="#"> ${example.title} </a>
+          <a class="example" title="${example.description}" data-path="${newPath}${example.filePath}" href="${example.href}"> ${example.title} </a>
         </li>`
     )
     examplesMenus.push(html`<li>${groupName}<ul class="examples-list">${examplesElements}</ul></li>`)

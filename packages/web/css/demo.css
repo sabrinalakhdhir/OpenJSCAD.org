@@ -129,6 +129,7 @@ input[type=button], #renderButton1, #cavityAdd, #deleteButton, #editButton, #exp
   cursor: pointer;
 }
 
+
 input[type=button], #renderButton1, #cavityAdd, #deleteButton, #editButton,#exportButton, #savenotebutton, #submitted, #viewPrefs, #back, #saveButton, #clearButton, #logout {
   background-color: white; 
   color: black; 

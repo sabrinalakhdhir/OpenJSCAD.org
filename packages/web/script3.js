@@ -52,10 +52,10 @@ function initializeProgressBar() {
     // The progress bar will be a rectangle with a border
     progressctx.strokeStyle = "black";
     progressctx.beginPath();
-    progressctx.moveTo(50, 30);
-    progressctx.lineTo(50, 80);
-    progressctx.lineTo(750, 80);
-    progressctx.lineTo(750, 30);
+    progressctx.moveTo(10, 30);
+    progressctx.lineTo(10, 80);
+    progressctx.lineTo(710, 80);
+    progressctx.lineTo(710, 30);
     progressctx.closePath();
     progressctx.stroke();
 
@@ -64,13 +64,13 @@ function initializeProgressBar() {
     progressctx.font = "14px Arial";
     progressctx.strokeStyle = "black";
     progressctx.fillStyle = "black";
-    progressctx.fillText("Project Progress", 50, 20);
+    progressctx.fillText("Project Progress", 10, 20);
     progressctx.font = "12px Arial";
-    progressctx.fillText("Information Gathering", 50, 110);
-    progressctx.fillText("Concept Development", 200, 110);
-    progressctx.fillText("Design Development", 370, 110);
-    progressctx.fillText("Prototyping", 550, 110);
-    progressctx.fillText("Evaluation", 690, 110);
+    progressctx.fillText("Information Gathering", 10, 110);
+    progressctx.fillText("Concept Development", 160, 110);
+    progressctx.fillText("Design Development", 330, 110);
+    progressctx.fillText("Prototyping", 510, 110);
+    progressctx.fillText("Evaluation", 650, 110);
 
 }
 
@@ -95,7 +95,7 @@ function updateProgressBar(completedPhase) {
     ];
 
     // Initialize and store the x and y coordinates for each phase of the project
-    var x = [50, 200, 360, 520, 670];
+    var x = [10, 160, 320, 480, 630];
     var y = [30, 30, 30, 30, 30];
 
     // Initialize and store the width and height for each phase of the project
@@ -214,7 +214,7 @@ function updateProgressBar(completedPhase) {
             var tx = progressMousex - tip.x;
             var ty = progressMousey - tip.y;
             if (tx > 0 && tx < tip.width && ty > 0 && ty < tip.height) {
-                progressctx.clearRect(45, 115, 1000, 50);
+                progressctx.clearRect(5, 115, 1000, 50);
                 progressctx.font = "12px Arial";
                 progressctx.fillStyle = "gray";
                 progressctx.strokeStyle = "gray";
@@ -224,7 +224,7 @@ function updateProgressBar(completedPhase) {
             }
         }
         if (!hit) {
-            progressctx.clearRect(45, 115, 1000, 50);
+            progressctx.clearRect(5, 115, 1000, 50);
         }
     }
 
@@ -256,6 +256,8 @@ function save() {
 
     // Set the content for the note to be the text entered by the user into the form
     noteContent = document.getElementById('noteText').value;
+    noteText.value = "";
+    noteText.setAttribute("placeholder", "Enter note here");
 
     //console.log(noteContent);
 
@@ -744,6 +746,58 @@ function logout() {
     location.replace("index.html")
 }
 
+
+document.getElementsByTagName("body")[0].addEventListener("keydown", function (e) { 
+    // Equals key
+    if (event.keyCode == 187) {
+        // change the user group to PD
+        // change the labels on the share buttons
+        // hide the "Change my selections" button
+        // update progress bar
+        console.log("detected PD key press");
+        loginUser = "pd";
+
+        console.log(sharingLabel1.innerHTML)
+        sharingLabel1.innerHTML = "Share this design with end-users";
+        sharingLabel2.innerHTML = "Share this design with health care professionals";
+    }
+
+    // Escape key
+    if (event.keyCode == 27) {
+        // change the user group to HCP
+        // change the labels on the share buttons
+        // hide the "Change my selections" button
+        // update progress bar
+        console.log("detected HCP key press");
+        loginUser = "hcp";
+
+        sharingLabel1.innerHTML = "Share this design with end-users";
+        sharingLabel2.innerHTML = "Share this design with product designers";
+    }
+
+    // Arrow up key
+    if (event.keyCode == 38) {
+        // change the user group to end-user
+        // change the labels on the share buttons
+        // show the "Change my selections" button
+        // update progress bar
+        console.log("detected end-user key press");
+        loginUser = "enduser";
+
+        sharingLabel1.innerHTML = "Share this design with health care professionals";
+        sharingLabel2.innerHTML = "Share this design with product designers";
+    }
+
+    // Semi-colon key
+    if (event.keyCode == 186) {
+        //enable the export options
+        var exportOptions = document.getElementsByClassName("export")
+        for(let i = 0; i < exportOptions.length; i++){
+            exportOptions[i].style.visibility = 'visible';
+        }
+    }
+});
+
 function initialize() {
 
     // Progress bar
@@ -939,8 +993,8 @@ function initialize() {
     var approvalDiv = document.createElement("div");
     approvalDiv.setAttribute("id", "approvalDiv");
     // approvalDiv.style.position = "absolute";
-    approvalDiv.style.right = "157px";
-    approvalDiv.style.bottom = "5px";
+    approvalDiv.style.right = "598px";
+    approvalDiv.style.top = "80px";
     approvalDiv.style.zIndex = "100";
     approvalDiv.style.position = "absolute";
 
@@ -957,8 +1011,10 @@ function initialize() {
     var approvalLabel = document.createElement("label");
     approvalLabel.setAttribute("id", "approvalLabel");
     approvalLabel.setAttribute("for", "approval");
-    approvalLabel.innerHTML = "I am happy with this design!";
-    approvalLabel.style.fontStyle = "bold";
+    approvalLabel.style.fontSize = "14px";
+    approvalLabel.style.fontFamily = "Roboto, arial, sans-serif";
+    approvalLabel.innerHTML = "I approve this design!";
+    //approvalLabel.style.fontStyle = "bold";
     //approvalLabel.style.display = "none";
 
     approvalForm.appendChild(approvalButton);
@@ -971,8 +1027,8 @@ function initialize() {
     var shareDiv = document.createElement("div");
     shareDiv.setAttribute("id", "shareDiv");
     // shareDiv.style.position = "absolute";
-    shareDiv.style.right = "10px";
-    shareDiv.style.bottom = "30px";
+    shareDiv.style.left = "918px";
+    shareDiv.style.top = "35px";
     shareDiv.style.zIndex = "100";
     shareDiv.style.position = "fixed";
 
@@ -982,44 +1038,51 @@ function initialize() {
     shareForm.style.right = "100px";
     shareForm.style.top = "150px";
 
+    const shareLabel1 = document.createElement("label");
+    shareLabel1.setAttribute("id", "sharingLabel1");
     var shareButton1 = document.createElement("input");
     shareButton1.setAttribute("id", "shareButton1");
     shareButton1.setAttribute("type", "checkbox");
     shareButton1.setAttribute("name", "share1");
     shareButton1.setAttribute("value", "share1");
 
+    const shareLabel2 = document.createElement("label");
+    shareLabel2.setAttribute("id", "sharingLabel2");
     var shareButton2 = document.createElement("input");
     shareButton2.setAttribute("id", "shareButton2");
     shareButton2.setAttribute("type", "checkbox");
     shareButton2.setAttribute("name", "share2");
     shareButton2.setAttribute("value", "share2");
 
-    var shareLabel1 = document.createElement("label");
-    var shareLabel2 = document.createElement("label");
+    shareLabel1.style.fontFamily = "Roboto, arial, sans-serif";
+    shareLabel1.style.fontSize = "14px";
+
+    shareLabel2.style.fontFamily = "Roboto, arial, sans-serif";
+    shareLabel2.style.fontSize = "14px";
 
     var linebreak = document.createElement("br");
 
     if (userType == 'pd'){
         shareLabel1.setAttribute("for", "share1");
-        shareLabel1.innerHTML = "Share this design with end-users";
+        shareLabel1.innerHTML = "Share design with end-users";
 
         shareLabel2.setAttribute("for", "share2");
-        shareLabel2.innerHTML = "Share this design with health care professionals";
+        shareLabel2.innerHTML = "Share design with health care professionals";
 
     }
     else if (userType == 'hcp') {
         shareLabel1.setAttribute("for", "share1");
-        shareLabel1.innerHTML = "Share this design with end-users";
+        shareLabel1.innerHTML = "Share design with end-users";
 
         shareLabel2.setAttribute("for", "share2");
-        shareLabel2.innerHTML = "Share this design with product designers";
+        shareLabel2.innerHTML = "Share design with product designers";
     }
     else {
         shareLabel1.setAttribute("for", "share1");
-        shareLabel1.innerHTML = "Share this design with product designers";
+        shareLabel1.innerHTML = "Share design with product designers";
 
         shareLabel2.setAttribute("for", "share2");
-        shareLabel2.innerHTML = "Share this design with health care professionals";
+        shareLabel2.innerHTML = "Share design with health care professionals";
     }
 
     shareForm.appendChild(shareButton1);

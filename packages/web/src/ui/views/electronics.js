@@ -1,4 +1,4 @@
-const html = require('nanohtml')
+/*const html = require('nanohtml')
 const path = require('path')
 
 const electronicsData = require('../../../examples/electronics.json')
@@ -22,4 +22,4 @@ const electronics = (state, i18n) => {
   return html`<ul class="electronics-group">${electronicsMenus}</ul>`
 }
 
-module.exports = electronics
+module.exports = electronics*/
